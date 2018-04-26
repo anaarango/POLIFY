@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+
+<h:head>
+	<meta charset="utf-8" name="viewport"
+		content="width=device-width, initial-scale=1"
+		http-equiv="X-UA-Conpatible" />
+	<link rel="stylesheet"
+		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+	<title>Operaciones registradas</title>
+	<style type="text/css">
+.tableOutput {
+	margin: 12px;
+	width: 98% !important;
+}
+
+.tab {
+	display: inline-block;
+	margin-left: -2px;
+}
+</style>
+</h:head>
+<h:body>
+	<div class="container">
+		<div class="navbar navbar-inverse">
+			<div class="navbar-brand">Operaciones registradas</div>
+		</div>
+		<h:form>
+		<h:dataTable value="#{operacionesBean.operacionesList}" var="operaciones"
+			styleClass="table table-bordered table-striped tableOutput">
+			<h:column>
+				<f:facet name="header">#</f:facet>
+				
+				<h:outputText value="#{operaciones.id_operaciones}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">Empresa Difusora</f:facet>
+				<h:inputText value="#{operaciones.id_empresa_difusora}"
+					rendered="#{operaciones.canEdit}" />
+				<h:outputText value="#{operaciones.id_empresa_difusora}"
+					rendered="#{not operaciones.canEdit}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">Artista</f:facet>
+				<h:inputText value="#{operaciones.id_artista}" size="10"
+					rendered="#{operaciones.canEdit}" />
+				<h:outputText value="#{operaciones.id_artista}"
+					rendered="#{not operaciones.canEdit}" />
+
+			</h:column>
+			<h:column>
+				<f:facet name="header">Fecha de la operacion</f:facet>
+				<h:inputText value="#{operaciones.fecha_inicial}" size="10"
+					rendered="#{operaciones.canEdit}" />
+				<h:outputText value="#{operaciones.fecha_inicial}"
+					rendered="#{not operaciones.canEdit}" />
+				
+			</h:column>
+			<h:column>
+				<f:facet name="header">Edit</f:facet>
+				<h:commandButton value="Edit"
+					action="#{operacionesBean.updateOperacionesForm}">
+					<f:setPropertyActionListener target="#{operacionesBean.operaciones}"
+						value="#{operaciones}" />
+				</h:commandButton>
+			</h:column>
+			<h:column>
+				<f:facet name="header">Delete</f:facet>
+				<h:commandButton value="Delete"
+					action="#{operacionesBean.deleteOperacionesForm}">
+					<f:setPropertyActionListener target="#{operacionesBean.operaciones}"
+						value="#{operaciones}" />
+				</h:commandButton>
+			</h:column>
+		</h:dataTable>
+	
+		</h:form>
+	</div>
+</h:body>
+</html>
