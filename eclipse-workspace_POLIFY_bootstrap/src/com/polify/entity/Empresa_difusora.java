@@ -2,18 +2,13 @@ package com.polify.entity;
 
 public class Empresa_difusora {
 	
-	private int id_empresa_difusora;
+	private Integer id_empresa_difusora;
 	private String nombre_empresa;
 	private String email;
 	private int valor_x_operacion;
 	private boolean canEdit;
 	
-	public int getId_empresa_difusora() {
-		return id_empresa_difusora;
-	}
-	public void setId_empresa_difusora(int id_empresa_difusora) {
-		this.id_empresa_difusora = id_empresa_difusora;
-	}
+	
 	public String getNombre_empresa() {
 		return nombre_empresa;
 	}
@@ -48,6 +43,12 @@ public class Empresa_difusora {
 	}
 	public Empresa_difusora() {
 		super();
+	}
+	public Integer getId_empresa_difusora() {
+		return id_empresa_difusora;
+	}
+	public void setId_empresa_difusora(Integer id_empresa_difusora) {
+		this.id_empresa_difusora = id_empresa_difusora;
 	}
 	
 	

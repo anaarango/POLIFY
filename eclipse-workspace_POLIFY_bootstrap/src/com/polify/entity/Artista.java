@@ -54,7 +54,7 @@ public class Artista {
 		this.nombre_artista = nombre_artista;
 		this.id_empresa_difusora = id_empresa_difusora;
 		this.email = email;
-		this.canEdit = true;
+		
 	}
 
 	public Artista() {
