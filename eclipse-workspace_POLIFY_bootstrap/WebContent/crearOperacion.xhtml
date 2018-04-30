@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+<h:head>
+	<meta charset="utf-8" name="viewport"
+		content="width=device-width, initial-scale=1"
+		http-equiv="X-UA-Conpatible" />
+	<h:outputStylesheet library="css" name="bootstrap.min.css" />
+	<title>Ingresar Operacion</title>
+	<style type="text/css">
+.col-xs-updated {
+	width: 92% !important;
+}
+</style>
+</h:head>
+<h:body>
+	<div class="container">
+		<div class="navbar navbar-inverse">
+			<div class="navbar-brand">Ingresa nueva operación</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-xs-updated">
+				<h:form id="operacionesForm" styleClass="form-horizontal">
+					<div class="form-group">
+						<h:outputLabel For="fechaInicio" value="Fecha Inicial" />
+						<p:calendar id="fechaInicio"
+							value="#{operacionesBean.operaciones.fecha_inicial}"
+							showOn="button" />
+						<div class="col-sm-10"></div>
+					</div>
+					<div class="form-group">
+						<h:outputLabel For="fechaFin" value="Fecha Fin" />
+						<p:calendar id="fechaFin"
+							value="#{operacionesBean.operaciones.fecha_final}"
+							showOn="button" />
+						<div class="col-sm-10"></div>
+					</div>
+					<div class="form-group">
+						<h:outputLabel value="Nombre Artista" styleClass="control-label col-sm-2" />
+						<div class="col-sm-10">
+							<h:inputText value="#{operacionesBean.operaciones.id_artista}"
+								styleClass="form-control" />
+						</div>
+					</div>
+					<div class="form-group">
+						<h:outputLabel value="Numero de operaciones"
+							styleClass="control-label col-sm-2" />
+						<div class="col-sm-10">
+							<h:inputText value="#{operacionesBean.operaciones.numero_operaciones}"
+								styleClass="form-control" />
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<h:commandButton value="Crear"
+								action="#{operacionesBean.crearOperacionesForm}"
+								styleClass="btn btn-default" />
+						</div>
+					</div>
+				</h:form>
+			</div>
+		</div>
+	</div>
+</h:body>
+</html>

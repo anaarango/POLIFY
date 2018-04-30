@@ -1,0 +1,126 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+<h:head>
+	<meta charset="utf-8" name="viewport"
+		content="width=device-width, initial-scale=1"
+		http-equiv="X-UA-Conpatible" />
+	<h:outputStylesheet library="css" name="bootstrap.min.css" />
+	<title>Crear nuevo Artista</title>
+	<style type="text/css">
+.col-xs-updated {
+	width: 92% !important;
+}
+</style>
+	<f:event listener="#{artistaBean.init()}" type="preRenderView"></f:event>
+</h:head>
+<h:body>
+	<div class="container">
+		<div class="navbar navbar-inverse">
+			<div class="navbar-brand">Crear nuevo Artista</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-xs-updated">
+				<h:form id="artistaForm" styleClass="form-horizontal">
+					<div class="form-group">
+						<h:outputLabel value="Nombre" styleClass="control-label col-sm-2" />
+						<div class="col-sm-10">
+							<h:inputText value="#{artistaBean.artista.nombre_artista}"
+								styleClass="form-control" />
+						</div>
+					</div>
+					<div class="form-group">
+						<h:outputLabel value="email" styleClass="control-label col-sm-2" />
+						<div class="col-sm-10">
+							<h:inputText value="#{artistaBean.artista.email}"
+								styleClass="form-control" />
+						</div>
+					</div>
+					<div class="form-group">
+						<h:outputLabel value="Empresa Difusora"
+							styleClass="control-label col-sm-2" />
+						<div class="col-sm-10">
+							<h:selectOneMenu value="#{artistaBean.empresaDifusoraSelected}"
+								converter="ArtistaConverter">
+								<f:selectItems value="#{artistaBean.empresaDifusoraList}"
+									var="empresas" itemValue="#{empresas}"
+									itemLabel="#{empresas.nombre_empresa}" />
+
+							</h:selectOneMenu>
+
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+
+							<h:commandButton id="crearArtista" value="Crear"
+								action="#{artistaBean.createArtistaForm}"
+								styleClass="btn btn-default" />
+						</div>
+					</div>
+					<div>
+						<h:dataTable value="#{artistaBean.artistaEmpresaList}" var="artistaEmpresa"
+							rendered="#{artistaBean.mostrarTabla}"
+							styleClass="table table-bordered table-striped tableOutput">
+							<h:column>
+								<f:facet name="header">Id Artista</f:facet>
+
+								<h:outputText value="#{artistaEmpresa.artista.id_artista}" />
+							</h:column>
+							<h:column>
+								<f:facet name="header">Nombre</f:facet>
+								<h:inputText value="#{artistaEmpresa.artista.nombre_artista}"
+									rendered="#{artistaEmpresa.artista.canEdit}" />
+								<h:outputText value="#{artistaEmpresa.artista.nombre_artista}"
+									rendered="#{not artistaEmpresa.artista.canEdit}" />
+							</h:column>
+							<h:column>
+								<f:facet name="header">Empresa Difusora</f:facet>
+								<h:inputText value="#{artistaEmpresa.empresa.nombre_empresa}" size="10"
+									rendered="#{artistaEmpresa.artista.canEdit}" />
+								<h:outputText value="#{artistaEmpresa.empresa.nombre_empresa}"
+									rendered="#{not artistaEmpresa.artista.canEdit}" />
+								
+							<h:selectOneMenu value="#{artistaEmpresa.empresa.nombre_empresa}"
+								converter="ArtistaConverter" rendered="#{artistaEmpresa.artista.canEdit}">
+								<f:selectItems value="#{artistaBean.empresaDifusoraList}"
+									var="empresas" itemValue="#{empresas}"
+									itemLabel="#{empresas.nombre_empresa}" />
+
+							</h:selectOneMenu>
+
+						
+							</h:column>
+							<h:column>
+								<f:facet name="header">Email</f:facet>
+								<h:inputText value="#{artistaEmpresa.artista.email}" size="10"
+									rendered="#{artistaEmpresa.artista.canEdit}" />
+								<h:outputText value="#{artistaEmpresa.artista.email}"
+									rendered="#{not artistaEmpresa.artista.canEdit}" />
+
+							</h:column>
+							<h:column>
+								<f:facet name="header">Edit</f:facet>
+								<h:commandLink value="Edit"
+									action="#{artistaBean.editAction(artistaEmpresa.artista)}" rendered="#{not artistaEmpresa.artista.canEdit}"/>
+									
+								
+							</h:column>
+							<h:column>
+								<f:facet name="header">Delete</f:facet>
+								<h:commandButton value="Delete"
+									action="#{artistaBean.deleteArtistaForm}">
+									<f:setPropertyActionListener target="#{artistaBean.artista}"
+										value="#{artistaEmpresa.artista}" />
+								</h:commandButton>
+							</h:column>
+						</h:dataTable>
+					</div>
+				</h:form>
+			</div>
+		</div>
+	</div>
+</h:body>
+</html>
