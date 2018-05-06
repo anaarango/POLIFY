@@ -1,6 +1,5 @@
 package com.polify.controller;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,13 +21,12 @@ import com.polify.entity.Artista;
 public class ArtistaBean {
 
 	private List<ArtistaEmpresaDTO> artistasEmpresa;
-	
+
 	private Artista artista;
 
 	@ManagedProperty("#{artistaEmpresa}")
 	private ArtistaEmpresaController artistaController = new ArtistaEmpresaController();
 
-	
 	@PostConstruct
 	public void init() {
 
@@ -36,17 +34,20 @@ public class ArtistaBean {
 		artistaController = new ArtistaEmpresaController();
 		artista = new Artista();
 		artistasEmpresa = artistaController.consultarArtistasEmpresas();
-		
 
 	}
-
-	
 
 	public void createArtistaForm() {
 		DaoArtista daoArtista = new DaoArtista();
 
 		daoArtista.save(artista);
 		artistasEmpresa = artistaController.consultarArtistasEmpresas();
+		
+		String idArtistaCreado = Integer.toString(artistasEmpresa.get(artistasEmpresa.size()-1).getArtista().getId_artista());
+		
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		FacesMessage facesMessage = new FacesMessage("Creacion de Artista", "La creación del artista ha sido exitosa y con ID:" + idArtistaCreado);
+		facesContext.addMessage("artistaForm", facesMessage);
 
 	}
 
@@ -59,7 +60,7 @@ public class ArtistaBean {
 	}
 
 	public ArtistaEmpresaController getArtistaController() {
-		
+
 		return artistaController;
 	}
 
@@ -77,14 +78,14 @@ public class ArtistaBean {
 
 		artistasEmpresa = artistaController.consultarArtistasEmpresas();
 
-		FacesMessage msg = new FacesMessage("Artista Editado",
+		FacesMessage msg = new FacesMessage("Artista Editado exitosamente",
 				((ArtistaEmpresaDTO) event.getObject()).getEmpresa().getId_empresa_difusora().toString());
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
 	public void onRowCancel(RowEditEvent event) {
 
-		FacesMessage msg = new FacesMessage("Edit Cancelled",
+		FacesMessage msg = new FacesMessage("Edit Cancelada",
 				((ArtistaEmpresaDTO) event.getObject()).getEmpresa().getId_empresa_difusora().toString());
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
@@ -101,9 +102,11 @@ public class ArtistaBean {
 		DaoArtista daoArtista = new DaoArtista();
 		daoArtista.delete(artista.getId_artista());
 		artistasEmpresa = artistaController.consultarArtistasEmpresas();
+		
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		FacesMessage facesMessage = new FacesMessage("Creacion de Artista", "La eleminación del artista ha sido exitosa");
+		facesContext.addMessage("artistaForm", facesMessage);
 
 	}
-
-	
 
 }
