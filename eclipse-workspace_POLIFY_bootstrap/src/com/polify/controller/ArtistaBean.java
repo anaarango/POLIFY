@@ -42,11 +42,13 @@ public class ArtistaBean {
 
 		daoArtista.save(artista);
 		artistasEmpresa = artistaController.consultarArtistasEmpresas();
-		
-		String idArtistaCreado = Integer.toString(artistasEmpresa.get(artistasEmpresa.size()-1).getArtista().getId_artista());
-		
+
+		String idArtistaCreado = Integer
+				.toString(artistasEmpresa.get(artistasEmpresa.size() - 1).getArtista().getId_artista());
+
 		FacesContext facesContext = FacesContext.getCurrentInstance();
-		FacesMessage facesMessage = new FacesMessage("Creacion de Artista", "La creación del artista ha sido exitosa y con ID:" + idArtistaCreado);
+		FacesMessage facesMessage = new FacesMessage("Creacion de Artista",
+				"La creación del artista ha sido exitosa y con ID:" + idArtistaCreado);
 		facesContext.addMessage("artistaForm", facesMessage);
 
 	}
@@ -78,9 +80,9 @@ public class ArtistaBean {
 
 		artistasEmpresa = artistaController.consultarArtistasEmpresas();
 
-		FacesMessage msg = new FacesMessage("Artista Editado exitosamente",
-				((ArtistaEmpresaDTO) event.getObject()).getEmpresa().getId_empresa_difusora().toString());
-		FacesContext.getCurrentInstance().addMessage(null, msg);
+		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Artista Editado exitosamente",
+				"El Artista con ID: " + +art.getId_artista() + " ha sido actualizado de forma exitosa");
+		FacesContext.getCurrentInstance().addMessage("empresaForm", msg);
 	}
 
 	public void onRowCancel(RowEditEvent event) {
@@ -102,9 +104,10 @@ public class ArtistaBean {
 		DaoArtista daoArtista = new DaoArtista();
 		daoArtista.delete(artista.getId_artista());
 		artistasEmpresa = artistaController.consultarArtistasEmpresas();
-		
+
 		FacesContext facesContext = FacesContext.getCurrentInstance();
-		FacesMessage facesMessage = new FacesMessage("Creacion de Artista", "La eleminación del artista ha sido exitosa");
+		FacesMessage facesMessage = new FacesMessage("Creacion de Artista",
+				"La eleminación del artista ha sido exitosa");
 		facesContext.addMessage("artistaForm", facesMessage);
 
 	}
