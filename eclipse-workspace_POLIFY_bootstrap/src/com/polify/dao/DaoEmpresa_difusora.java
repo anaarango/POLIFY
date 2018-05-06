@@ -31,7 +31,7 @@ public class DaoEmpresa_difusora {
 		try {
 			
 			stmt = conexion.createStatement();
-			String sql = "SELECT * " + " FROM EMPRESA_DIFUSORA ";
+			String sql = "SELECT * " + " FROM EMPRESA_DIFUSORA ORDER BY ID_EMPRESA_DIFUSORA ASC ";
 			rs = stmt.executeQuery(sql);
 
 			while (rs.next()) {
