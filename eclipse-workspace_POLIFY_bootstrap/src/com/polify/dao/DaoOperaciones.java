@@ -15,19 +15,24 @@ import com.polify.entity.Operaciones;
 public class DaoOperaciones {
 
 	private Connection conexion;
+	
+	
 
 	public DaoOperaciones() {
+		super();
 		conexion = DBUtil.getConexion();
 	}
 
 	public List<Operaciones> getAllOperaciones() {
 		List<Operaciones> operacionesList = new LinkedList<>();
+		ResultSet rs = null;
+		Statement stmt = null;
 
 		try {
-
-			Statement stmt = conexion.createStatement();
+			
+			stmt = conexion.createStatement();
 			String sql = "SELECT * " + " FROM OPERACIONES";
-			ResultSet rs = stmt.executeQuery(sql);
+			rs = stmt.executeQuery(sql);
 
 			while (rs.next()) {
 				int id_operaciones = rs.getInt("ID_OPERACIONES");
@@ -43,7 +48,21 @@ public class DaoOperaciones {
 				operacionesList.add(op);
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			try {
+				if (stmt != null) {
+					stmt.close();
+				}
+
+				if (rs != null) {
+					rs.close();
+				}
+				
+
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
 		}
 
 		return operacionesList;
@@ -51,26 +70,38 @@ public class DaoOperaciones {
 
 	public boolean delete(int id_operaciones) {
 		String sql = "DELETE FROM OPERACIONES WHERE ID_OPERACIONES='" + id_operaciones + "'";
-		PreparedStatement ps;
+		PreparedStatement ps = null;
 		try {
+			
 			ps = conexion.prepareStatement(sql);
 			ps.executeUpdate();
 			return true;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
+		}
+		try {
+			if (ps != null) {
+				ps.close();
+			}
+
+			
+
+		} catch (SQLException e2) {
+			e2.printStackTrace();
 		}
 		return false;
 	}
 
-	public boolean save(Operaciones operaciones) throws SQLException {
+	public boolean save(Operaciones operaciones) {
 
+		PreparedStatement ps = null;
 		try {
-			
+
 			String sql = "INSERT INTO OPERACIONES ( ID_OPERACIONES ,ID_ARTISTA, ID_EMPRESA_DIFUSORA, ID_USUARIO, NUMERO_OPERACIONES, FECHA_INICIAL, FEHA_FINAL)"
 					+ " VALUES(ID_OPERACIONES_SEQUENCE.NEXTVAL,?,?,?,?,?,?)";
-
-			PreparedStatement ps = conexion.prepareStatement(sql);
+			
+			ps = conexion.prepareStatement(sql);
 			ps.setInt(1, operaciones.getId_artista());
 			ps.setInt(2, operaciones.getId_empresa_difusora());
 			ps.setInt(3, operaciones.getId_usuario());
@@ -88,35 +119,31 @@ public class DaoOperaciones {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+
+		} finally {
+			try {
+				if (ps != null) {
+					ps.close();
+				}
+
+				
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
 		}
+
+		return false;
 	}
 
 	public boolean update(Operaciones operaciones) {
-//		String sql = "UPDATE OPERACIONES SET ID_ARTISTA ='" + operaciones.getId_artista() + "', "
-//				+ "ID_EMPRESA_DIFUSORA = '" + operaciones.getId_empresa_difusora() + "'," + "NUMERO_OPERACIONES = '"
-//				+ operaciones.getNumero_operaciones() + "'," + "FECHA_INICIAL = '" + operaciones.getFecha_inicial()
-//				+ "'," + "FECHA_FINAL = '" + operaciones.getFecha_final() + "'," + " WHERE ID_OPERACIONES = '"
-//				+ operaciones.getId_operaciones() + "'";
-//
-//		PreparedStatement ps;
-//		try {
-//			ps = conexion.prepareStatement(sql);
-//			ps.executeUpdate();
-//			return true;
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return false;
-		
+		PreparedStatement ps = null;
+
 		try {
 			
 			String sql = "UPDATE OPERACIONES SET ID_ARTISTA = ? , ID_EMPRESA_DIFUSORA = ?, ID_USUARIO = ? , "
 					+ "NUMERO_OPERACIONES = ?, FECHA_INICIAL = ? , FEHA_FINAL = ?  WHERE ID_OPERACIONES = ? ";
-					
 
-			PreparedStatement ps = conexion.prepareStatement(sql);
+			ps = conexion.prepareStatement(sql);
 			ps.setInt(1, operaciones.getId_artista());
 			ps.setInt(2, operaciones.getId_empresa_difusora());
 			ps.setInt(3, operaciones.getId_usuario());
@@ -135,9 +162,20 @@ public class DaoOperaciones {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
-		}
 
+		} finally {
+			try {
+				if (ps != null) {
+					ps.close();
+				}
+
+				
+
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+		return false;
 	}
 
 }

@@ -23,7 +23,7 @@ public class EmpresaDifusoraBean {
 		try {
 			daoEmpresa.save(empresa);
 
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return "resultEmpresa";

@@ -23,7 +23,7 @@ public class OperacionesBean {
 		try {
 			daoOperaciones.save(operaciones);
 
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return "resultOperaciones";

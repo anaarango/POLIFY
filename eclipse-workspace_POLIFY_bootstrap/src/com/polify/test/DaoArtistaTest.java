@@ -81,7 +81,7 @@ public class DaoArtistaTest {
 			}
 			
 			assertTrue("Resultado es",resultado);
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -108,7 +108,7 @@ public class DaoArtistaTest {
 		try {
 			boolean resultado = daoArtista.save(artista);
 			assertTrue("Artista guardado", resultado);
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

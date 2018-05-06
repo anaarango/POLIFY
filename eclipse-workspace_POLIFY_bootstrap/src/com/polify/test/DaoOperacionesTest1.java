@@ -131,7 +131,7 @@ public class DaoOperacionesTest1 {
 		try {
 			boolean resultado = dao.save(operaciones);
 			assertTrue("Operacion guardada", resultado);
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

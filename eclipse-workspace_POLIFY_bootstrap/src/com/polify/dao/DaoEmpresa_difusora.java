@@ -14,81 +14,145 @@ import com.polify.entity.Empresa_difusora;
 public class DaoEmpresa_difusora {
 
 	private Connection conexion;
+	
+	
 
 	public DaoEmpresa_difusora() {
+		super();
 		conexion = DBUtil.getConexion();
 	}
 
-	public List<Empresa_difusora> getAllEmpresas() throws SQLException {
+	public List<Empresa_difusora> getAllEmpresas() {
 		List<Empresa_difusora> empresaList = new LinkedList<>();
 
-		Statement stmt = conexion.createStatement();
-		String sql = "SELECT * " + " FROM EMPRESA_DIFUSORA ";
-		ResultSet rs = stmt.executeQuery(sql);
+		ResultSet rs = null;
+		Statement stmt = null;
 
-		while (rs.next()) {
-			int id_empresa = rs.getInt("ID_EMPRESA_DIFUSORA");
-			String nombre = rs.getString("NOMBRE_EMPRESA");
-			String email =rs.getString("EMAIL");
-			int valor_operacion = rs.getInt ("VALOR_X_OPERACION");
+		try {
+			
+			stmt = conexion.createStatement();
+			String sql = "SELECT * " + " FROM EMPRESA_DIFUSORA ";
+			rs = stmt.executeQuery(sql);
 
-			Empresa_difusora em = new Empresa_difusora(id_empresa, nombre, email, valor_operacion);
-			empresaList.add(em);
+			while (rs.next()) {
+				
+				int id_empresa = rs.getInt("ID_EMPRESA_DIFUSORA");
+				String nombre = rs.getString("NOMBRE_EMPRESA");
+				String email = rs.getString("EMAIL");
+				int valor_operacion = rs.getInt("VALOR_X_OPERACION");
+
+				Empresa_difusora em = new Empresa_difusora(id_empresa, nombre, email, valor_operacion);
+				empresaList.add(em);
+			}
+		} catch (Exception e) {
+
+		} finally {
+			try {
+				if (stmt != null) {
+					stmt.close();
+				}
+
+				if (rs != null) {
+					rs.close();
+				}
+				
+
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
 		}
 
 		return empresaList;
 	}
 
-	public boolean delete(int id_empresa_difusora)  {
+	public boolean delete(int id_empresa_difusora) {
 		String sql = "DELETE FROM EMPRESA_DIFUSORA WHERE ID_EMPRESA_DIFUSORA='" + id_empresa_difusora + "'";
-		PreparedStatement ps;
+		PreparedStatement ps = null;
 		try {
+			
 			ps = conexion.prepareStatement(sql);
 			ps.executeUpdate();
 			return true;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
+		} finally {
+			try {
+				if (ps != null) {
+					ps.close();
+				}
+
+				
+
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
 		}
 		return false;
 	}
 
-	public boolean save(Empresa_difusora empresa) throws SQLException {
+	public boolean save(Empresa_difusora empresa) {
+		PreparedStatement ps = null;
 
-	        try {
-	            String sql = "INSERT INTO EMPRESA_DIFUSORA ( ID_EMPRESA_DIFUSORA, NOMBRE_EMPRESA, EMAIL, VALOR_X_OPERACION)"
-	                    + " VALUES(ID_EMPRESA_DIFUSORA_SEQUENCE.NEXTVAL,'" + empresa.getNombre_empresa() + "','" 
-	            		+ empresa.getEmail() + "','" + empresa.getValor_x_operacion() + "' )";
+		try {
+			
 
-	            PreparedStatement ps = conexion.prepareStatement(sql);
+			String sql = "INSERT INTO EMPRESA_DIFUSORA ( ID_EMPRESA_DIFUSORA, NOMBRE_EMPRESA, EMAIL, VALOR_X_OPERACION)"
+					+ " VALUES(ID_EMPRESA_DIFUSORA_SEQUENCE.NEXTVAL,'" + empresa.getNombre_empresa() + "','"
+					+ empresa.getEmail() + "','" + empresa.getValor_x_operacion() + "' )";
 
-	            ps.executeUpdate();
-	            System.out.println("empresa");
+			ps = conexion.prepareStatement(sql);
 
-	            return true;
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            return false;
-	        }
-	}
-	
-	 public boolean update(Empresa_difusora empresa) {
-	        String sql = "UPDATE EMPRESA_DIFUSORA SET NOMBRE_EMPRESA ='" + empresa.getNombre_empresa()  + "' , "
-	                + "EMAIL = '" + empresa.getEmail() + "', "
-	                 + "VALOR_X_OPERACION = '" + empresa.getValor_x_operacion() + "'"
-	                + " WHERE ID_EMPRESA_DIFUSORA = '" + empresa.getId_empresa_difusora() + "'";
+			ps.executeUpdate();
+			System.out.println("empresa");
 
-	        PreparedStatement ps;
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
 			try {
-				ps = conexion.prepareStatement(sql);
-				ps.executeUpdate();
-				return true;
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				if (ps != null) {
+					ps.close();
+				}
+
+				
+
+			} catch (SQLException e2) {
+				e2.printStackTrace();
 			}
-	        return false;
-	    }
-	
-	
+		}
+
+		return false;
+	}
+
+	public boolean update(Empresa_difusora empresa) {
+		String sql = "UPDATE EMPRESA_DIFUSORA SET NOMBRE_EMPRESA ='" + empresa.getNombre_empresa() + "' , "
+				+ "EMAIL = '" + empresa.getEmail() + "', " + "VALOR_X_OPERACION = '" + empresa.getValor_x_operacion()
+				+ "'" + " WHERE ID_EMPRESA_DIFUSORA = '" + empresa.getId_empresa_difusora() + "'";
+
+		PreparedStatement ps = null;
+		try {
+			
+			ps = conexion.prepareStatement(sql);
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		} finally {
+			try {
+				if (ps != null) {
+					ps.close();
+				}
+
+				
+
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+		return false;
+	}
+
 }
