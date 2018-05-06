@@ -10,13 +10,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.polify.controller.utility.DBUtil;
+import com.polify.dto.OperacionesArtistaEmpresaDTO;
+import com.polify.entity.Artista;
+import com.polify.entity.Empresa_difusora;
 import com.polify.entity.Operaciones;
 
 public class DaoOperaciones {
 
 	private Connection conexion;
-	
-	
 
 	public DaoOperaciones() {
 		super();
@@ -29,7 +30,7 @@ public class DaoOperaciones {
 		Statement stmt = null;
 
 		try {
-			
+
 			stmt = conexion.createStatement();
 			String sql = "SELECT * " + " FROM OPERACIONES";
 			rs = stmt.executeQuery(sql);
@@ -58,7 +59,6 @@ public class DaoOperaciones {
 				if (rs != null) {
 					rs.close();
 				}
-				
 
 			} catch (SQLException e2) {
 				e2.printStackTrace();
@@ -72,7 +72,7 @@ public class DaoOperaciones {
 		String sql = "DELETE FROM OPERACIONES WHERE ID_OPERACIONES='" + id_operaciones + "'";
 		PreparedStatement ps = null;
 		try {
-			
+
 			ps = conexion.prepareStatement(sql);
 			ps.executeUpdate();
 			return true;
@@ -84,8 +84,6 @@ public class DaoOperaciones {
 			if (ps != null) {
 				ps.close();
 			}
-
-			
 
 		} catch (SQLException e2) {
 			e2.printStackTrace();
@@ -100,7 +98,7 @@ public class DaoOperaciones {
 
 			String sql = "INSERT INTO OPERACIONES ( ID_OPERACIONES ,ID_ARTISTA, ID_EMPRESA_DIFUSORA, ID_USUARIO, NUMERO_OPERACIONES, FECHA_INICIAL, FEHA_FINAL)"
 					+ " VALUES(ID_OPERACIONES_SEQUENCE.NEXTVAL,?,?,?,?,?,?)";
-			
+
 			ps = conexion.prepareStatement(sql);
 			ps.setInt(1, operaciones.getId_artista());
 			ps.setInt(2, operaciones.getId_empresa_difusora());
@@ -126,7 +124,6 @@ public class DaoOperaciones {
 					ps.close();
 				}
 
-				
 			} catch (SQLException e2) {
 				e2.printStackTrace();
 			}
@@ -139,7 +136,7 @@ public class DaoOperaciones {
 		PreparedStatement ps = null;
 
 		try {
-			
+
 			String sql = "UPDATE OPERACIONES SET ID_ARTISTA = ? , ID_EMPRESA_DIFUSORA = ?, ID_USUARIO = ? , "
 					+ "NUMERO_OPERACIONES = ?, FECHA_INICIAL = ? , FEHA_FINAL = ?  WHERE ID_OPERACIONES = ? ";
 
@@ -169,13 +166,72 @@ public class DaoOperaciones {
 					ps.close();
 				}
 
-				
-
 			} catch (SQLException e2) {
 				e2.printStackTrace();
 			}
 		}
 		return false;
+	}
+
+	public List<OperacionesArtistaEmpresaDTO> getAllOperacionesEmpresasArtistas() {
+		List<OperacionesArtistaEmpresaDTO> operacionesList = new LinkedList<>();
+		OperacionesArtistaEmpresaDTO operaciones = new OperacionesArtistaEmpresaDTO();
+		Operaciones operacion = new Operaciones();
+		Artista artista = new Artista();
+		Empresa_difusora empresa = new Empresa_difusora();
+		ResultSet rs = null;
+		Statement stmt = null;
+
+		try {
+
+			stmt = conexion.createStatement();
+			String sql = "SELECT op.ID_OPERACIONES, op.NUMERO_OPERACIONES, op.FECHA_INICIAL, op.FEHA_FINAL, "
+					+ "art.id_artista, art.nombre_artista, emp.ID_EMPRESA_DIFUSORA, emp.NOMBRE_EMPRESA, op.ID_USUARIO  "
+					+ "FROM ARTISTA art, EMPRESA_DIFUSORA emp, OPERACIONES op where op.ID_EMPRESA_DIFUSORA=emp."
+					+ "ID_EMPRESA_DIFUSORA and op.ID_ARTISTA=art.ID_ARTISTA ORDER BY op.ID_OPERACIONES ASC";
+			rs = stmt.executeQuery(sql);
+
+			while (rs.next()) {
+				operacion = new Operaciones();
+				artista = new Artista();
+				empresa = new Empresa_difusora();
+				operacion.setId_operaciones(rs.getInt("ID_OPERACIONES"));
+				operacion.setId_usuario(rs.getInt("ID_USUARIO"));
+				operacion.setFecha_inicial(rs.getDate("FECHA_INICIAL"));
+				operacion.setFecha_final(rs.getDate("FEHA_FINAL"));
+				operacion.setNumero_operaciones(rs.getInt("NUMERO_OPERACIONES"));
+
+				empresa.setId_empresa_difusora(rs.getInt("ID_EMPRESA_DIFUSORA"));
+				empresa.setNombre_empresa(rs.getString("NOMBRE_EMPRESA"));
+
+				artista.setId_artista(rs.getInt("ID_ARTISTA"));
+				artista.setNombre_artista(rs.getString("NOMBRE_ARTISTA"));
+
+				operaciones = new OperacionesArtistaEmpresaDTO();
+				operaciones.setArtista(artista);
+				operaciones.setEmpresa(empresa);
+				operaciones.setOperaciones(operacion);
+
+				operacionesList.add(operaciones);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (stmt != null) {
+					stmt.close();
+				}
+
+				if (rs != null) {
+					rs.close();
+				}
+
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+
+		return operacionesList;
 	}
 
 }
