@@ -1,16 +1,25 @@
 <!DOCTYPE HTML>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
 
 <h:head>
 	<meta charset="utf-8" name="viewport"
 		content="width=device-width, initial-scale=1"
 		http-equiv="X-UA-Conpatible" />
 	<h:outputStylesheet library="css" name="bootstrap.min.css" />
-	<title>Crear nueva empresa de difusion</title>
+	<title>Gestionar Empresa de difusion</title>
 	<style type="text/css">
 .col-xs-updated {
 	width: 92% !important;
+}
+.button {
+    /* resize images */
+
+    width: 30%;
+    height: auto;
+
 }
 </style>
 </h:head>
@@ -23,8 +32,7 @@
 			<div class="col-xs-12 col-xs-updated">
 				<h:form id="empresaForm" styleClass="form-horizontal">
 					<div class="form-group">
-						<h:outputLabel value="Nombre de la empresa difusora"
-							styleClass="control-label col-sm-2" />
+						<h:outputLabel value="Nombre" styleClass="control-label col-sm-2" />
 						<div class="col-sm-10">
 							<h:inputText
 								value="#{empresaDifusoraBean.empresa.nombre_empresa}"
@@ -32,25 +40,111 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<h:outputLabel value="Valor de la operacion"
-							styleClass="control-label col-sm-2" />
+						<h:outputLabel value="email" styleClass="control-label col-sm-2" />
+						<div class="col-sm-10">
+							<h:inputText value="#{empresaDifusoraBean.empresa.email}"
+								styleClass="form-control" />
+						</div>
+					</div>
+					<div class="form-group">
+						<h:outputLabel value="Valor por Operacion" styleClass="control-label col-sm-2" />
 						<div class="col-sm-10">
 							<h:inputText
 								value="#{empresaDifusoraBean.empresa.valor_x_operacion}"
 								styleClass="form-control" />
 						</div>
 					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+
+							<h:commandButton id="crearEmpresa" value="Crear"
+								action="#{empresaDifusoraBean.crearEmpresaForm}"
+								styleClass="btn btn-default" />
+						</div>
+					</div>
+					
+					<div>
+
+						<p:growl id="msgs" showDetail="true" sticky="true" />
+
+
+						<p:dataTable id="tbl" var="emp"
+							value="#{empresaDifusoraBean.empresaList}" editable="true"
+							styleClass="table table-bordered table-striped tableOutput">
+							<f:facet name="header">Artistas</f:facet>
+							<p:ajax event="rowEdit" listener="#{empresaDifusoraBean.onRowEdit}"
+								update=":empresaForm:msgs" />
+							<p:ajax event="rowEditCancel"
+								listener="#{empresaDifusoraBean.onRowCancel}" update=":empresaForm:msgs" />
+
+
+							<p:column headerText="Id" style="width:32px">
+
+								<h:outputText value="#{emp.id_empresa_difusora}" />
+
+							</p:column>
+
+							<p:column headerText="Nombre Empresa">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{emp.nombre_empresa}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="modelInputEmpresa"
+											value="#{emp.nombre_empresa}" style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+
+							</p:column>
+
+							<p:column headerText="Email">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{emp.email}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="modelInput" value="#{emp.email}"
+											style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+
+							</p:column>
+							
+							<p:column headerText="Valor operacion">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{emp.valor_x_operacion}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="modelInput2" value="#{emp.valor_x_operacion}"
+											style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+
+							</p:column>
+							
+							<p:column style="width:80px" headerText="Update">
+								<p:rowEditor />
+							</p:column>
+							<p:column style="width:80px">
+								<f:facet name="header">Delete</f:facet>
+								<h:commandButton id="deleteButton" styleClass="button"
+									image="/resources/icons//delete.png"
+									action="#{empresaDifusoraBean.deleteEmpresaForm}">
+									<f:setPropertyActionListener target="#{empresaDifusoraBean.empresa}"
+										value="#{emp}" />
+								</h:commandButton>
+							</p:column>
+
+						</p:dataTable>
+
+					</div>
+					
+					
+				</h:form>
 			</div>
-			<div class="form-group">
-				<div class="col-sm-offset-2 col-sm-10">
-					<h:commandButton value="Crear"
-						action="#{empresaDifusoraBean.crearEmpresaForm}"
-						styleClass="btn btn-default" />
-				</div>
-			</div>
-			</h:form>
 		</div>
 	</div>
-	</div>
+
 </h:body>
 </html>
