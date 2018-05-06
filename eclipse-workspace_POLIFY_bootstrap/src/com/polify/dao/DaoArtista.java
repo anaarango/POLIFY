@@ -16,56 +16,105 @@ import com.polify.entity.Empresa_difusora;
 public class DaoArtista {
 
 	private Connection conexion;
+	
+	
 
 	public DaoArtista() {
+		super();
 		conexion = DBUtil.getConexion();
 	}
 
-	public List<Artista> getAllArtist() throws SQLException {
+	public List<Artista> getAllArtist() {
+
 		List<Artista> artistList = new LinkedList<>();
+		ResultSet rs = null;
+		Statement stmt = null;
 
-		Statement stmt = conexion.createStatement();
-		String sql = "SELECT * " + " FROM ARTISTA ORDER BY ID_ARTISTA ASC ";
-		ResultSet rs = stmt.executeQuery(sql);
+		try {
+			
+			stmt = conexion.createStatement();
+			String sql = "SELECT * " + " FROM ARTISTA ORDER BY ID_ARTISTA ASC ";
+			rs = stmt.executeQuery(sql);
 
-		while (rs.next()) {
-			int id_artista = rs.getInt("ID_ARTISTA");
-			String nombre = rs.getString("NOMBRE_ARTISTA");
-			int id_empresa = rs.getInt("ID_EMPRESA_DIFUSORA");
-			String email = rs.getString("EMAIL");
+			while (rs.next()) {
+				int id_artista = rs.getInt("ID_ARTISTA");
+				String nombre = rs.getString("NOMBRE_ARTISTA");
+				int id_empresa = rs.getInt("ID_EMPRESA_DIFUSORA");
+				String email = rs.getString("EMAIL");
 
-			Artista a = new Artista(id_artista, nombre, id_empresa, email);
-			artistList.add(a);
+				Artista a = new Artista(id_artista, nombre, id_empresa, email);
+				artistList.add(a);
+			}
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		} finally {
+			try {
+				if (stmt != null) {
+					stmt.close();
+				}
+
+				if (rs != null) {
+					rs.close();
+				}
+				
+
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
 		}
 
 		return artistList;
 	}
 
-	public List<ArtistaEmpresaDTO> getAllArtistaEmpresas() throws SQLException {
+	public List<ArtistaEmpresaDTO> getAllArtistaEmpresas() {
 		List<ArtistaEmpresaDTO> artistaEmpresatList = new LinkedList<>();
+		ResultSet rs = null;
+		Statement stmt = null;
 
-		Statement stmt = conexion.createStatement();
-		String sql = "SELECT art.id_artista, art.nombre_artista, " + "art.email as emailArtista, emp.NOMBRE_EMPRESA,"
-				+ "emp.EMAIL as emailEmpresa, " + "emp.VALOR_X_OPERACION,emp.ID_EMPRESA_DIFUSORA "
-				+ "FROM ARTISTA art, EMPRESA_DIFUSORA emp " + "where art.ID_EMPRESA_DIFUSORA=emp.ID_EMPRESA_DIFUSORA "
-				+ "ORDER BY ID_ARTISTA ASC ";
-		ResultSet rs = stmt.executeQuery(sql);
+		try {
+			
 
-		while (rs.next()) {
-			int id_artista = rs.getInt("ID_ARTISTA");
-			String nombre = rs.getString("NOMBRE_ARTISTA");
-			int id_empresa = rs.getInt("ID_EMPRESA_DIFUSORA");
-			String emailArtista = rs.getString("emailArtista");
-			String nombreEmpresa = rs.getString("NOMBRE_EMPRESA");
-			String emailEmpresa = rs.getString("emailEmpresa");
-			int valorOperacion = rs.getInt("VALOR_X_OPERACION");
+			stmt = conexion.createStatement();
+			String sql = "SELECT art.id_artista, art.nombre_artista, "
+					+ "art.email as emailArtista, emp.NOMBRE_EMPRESA," + "emp.EMAIL as emailEmpresa, "
+					+ "emp.VALOR_X_OPERACION,emp.ID_EMPRESA_DIFUSORA " + "FROM ARTISTA art, EMPRESA_DIFUSORA emp "
+					+ "where art.ID_EMPRESA_DIFUSORA=emp.ID_EMPRESA_DIFUSORA " + "ORDER BY ID_ARTISTA ASC ";
+			rs = stmt.executeQuery(sql);
 
-			Artista a = new Artista(id_artista, nombre, id_empresa, emailArtista);
-			Empresa_difusora emp = new Empresa_difusora(id_empresa, nombreEmpresa, emailEmpresa, valorOperacion);
-			ArtistaEmpresaDTO artEmpDTO = new ArtistaEmpresaDTO();
-			artEmpDTO.setArtista(a);
-			artEmpDTO.setEmpresa(emp);
-			artistaEmpresatList.add(artEmpDTO);
+			while (rs.next()) {
+				int id_artista = rs.getInt("ID_ARTISTA");
+				String nombre = rs.getString("NOMBRE_ARTISTA");
+				int id_empresa = rs.getInt("ID_EMPRESA_DIFUSORA");
+				String emailArtista = rs.getString("emailArtista");
+				String nombreEmpresa = rs.getString("NOMBRE_EMPRESA");
+				String emailEmpresa = rs.getString("emailEmpresa");
+				int valorOperacion = rs.getInt("VALOR_X_OPERACION");
+
+				Artista a = new Artista(id_artista, nombre, id_empresa, emailArtista);
+				Empresa_difusora emp = new Empresa_difusora(id_empresa, nombreEmpresa, emailEmpresa, valorOperacion);
+				ArtistaEmpresaDTO artEmpDTO = new ArtistaEmpresaDTO();
+				artEmpDTO.setArtista(a);
+				artEmpDTO.setEmpresa(emp);
+				artistaEmpresatList.add(artEmpDTO);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (stmt != null) {
+					stmt.close();
+				}
+
+				if (rs != null) {
+					rs.close();
+				}
+
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
 		}
 
 		return artistaEmpresatList;
@@ -73,26 +122,39 @@ public class DaoArtista {
 
 	public boolean delete(int id_artista) {
 		String sql = "DELETE FROM ARTISTA WHERE ID_ARTISTA='" + id_artista + "'";
-		PreparedStatement ps;
+		PreparedStatement ps = null;
 		try {
+			
 			ps = conexion.prepareStatement(sql);
 			ps.executeUpdate();
 			return true;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
+		} finally {
+			try {
+				if (ps != null) {
+					ps.close();
+				}
+
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
 		}
+
 		return false;
 	}
 
-	public boolean save(Artista artista) throws SQLException {
+	public boolean save(Artista artista) {
 
+		PreparedStatement ps = null;
 		try {
+			
 			String sql = "INSERT INTO ARTISTA ( ID_ARTISTA ,NOMBRE_ARTISTA, ID_EMPRESA_DIFUSORA, EMAIL)"
 					+ " VALUES(ARTISTA_ID_SEQUENCE.NEXTVAL,'" + artista.getNombre_artista() + "','"
 					+ artista.getId_empresa_difusora() + "','" + artista.getEmail() + "')";
 
-			PreparedStatement ps = conexion.prepareStatement(sql);
+			ps = conexion.prepareStatement(sql);
 
 			ps.executeUpdate();
 			System.out.println("artista");
@@ -101,22 +163,42 @@ public class DaoArtista {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
+		} finally {
+			try {
+				if (ps != null) {
+					ps.close();
+				}
+
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
 		}
 	}
 
 	public boolean update(Artista artista) {
+
 		String sql = "UPDATE ARTISTA SET NOMBRE_ARTISTA ='" + artista.getNombre_artista() + "', "
 				+ "ID_EMPRESA_DIFUSORA = '" + artista.getId_empresa_difusora() + "', " + "EMAIL = '"
 				+ artista.getEmail() + "' " + " WHERE ID_ARTISTA = '" + artista.getId_artista() + "'";
 
-		PreparedStatement ps;
+		PreparedStatement ps = null;
 		try {
+			
 			ps = conexion.prepareStatement(sql);
 			ps.executeUpdate();
 			return true;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
+		} finally {
+			try {
+				if (ps != null) {
+					ps.close();
+				}
+
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
 		}
 		return false;
 	}

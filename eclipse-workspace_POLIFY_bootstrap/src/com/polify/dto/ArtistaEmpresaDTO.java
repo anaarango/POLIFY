@@ -3,6 +3,7 @@ package com.polify.dto;
 import com.polify.entity.Artista;
 import com.polify.entity.Empresa_difusora;
 
+
 public class ArtistaEmpresaDTO {
 	
 	private Artista artista = new Artista();

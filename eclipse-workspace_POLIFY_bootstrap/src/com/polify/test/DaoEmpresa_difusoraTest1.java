@@ -59,7 +59,7 @@ public class DaoEmpresa_difusoraTest1 {
 			if (!empresa.isEmpty()) {
 				resultado = true;
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -79,7 +79,7 @@ public class DaoEmpresa_difusoraTest1 {
 		try {
 			boolean resultado = dao.save(empresa);
 			assertTrue("Empresa guardada", resultado);
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
