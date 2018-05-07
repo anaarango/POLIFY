@@ -5,16 +5,10 @@ import java.util.Date;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
-
-
-import org.primefaces.component.calendar.Calendar;
-
-@FacesValidator("primeDateRangeValidator")
-public class PrimeDateRangeValidator implements Validator {
+public class ValidadorFechas implements Validator {
 
 	@Override
 	public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
@@ -31,10 +25,9 @@ public class PrimeDateRangeValidator implements Validator {
 		Date startDate = (Date) startDateValue;
 		Date endDate = (Date) value;
 		if (endDate.before(startDate)) {
-//			throw new ValidatorException(FacesMessageUtil.newBundledFacesMessage(FacesMessage.SEVERITY_ERROR, "",
-//					"msg.dateRange", ((Calendar) component).getLabel(), startDate));
-			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "La fecha ingresada debe ser menor a",
-					" No se ha podido crear la operacion");
+			
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"La fecha de inicio ingresada debe ser menor a: " + endDate, " Error en las fechas");
 			throw new ValidatorException(msg);
 		}
 	}
