@@ -1,8 +1,11 @@
 package com.polify.test.selenium.pages;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-
+import org.openqa.selenium.WebElement;
 
 /**
  * @author Ana Arango
@@ -18,7 +21,9 @@ public class artistaEliminar {
 	By deleteArtistBtn = By.name("artistaForm:tbl:0:deleteButton");
 	By closeMessage = By.className("ui-growl-icon-close ui-icon ui-icon-closethick");
 	By messageDelete = By.xpath("//*[@id=\"artistaForm:msgs_container\"]/div/div/div[2]/p");
-	String messageDeleteComplete = "";	
+
+	By tableArtist = By.xpath("//*[@id=\"artistaForm:tbl\"]/div[2]/table");
+	String messageDeleteComplete = "";
 
 	/**
 	 * @param driver,
@@ -30,40 +35,59 @@ public class artistaEliminar {
 
 	}
 
-	public String deleteArtista(String email) {
+	public ArrayList<String> deleteArtista() {
 
-		this.deleteBtn();
-		messageDeleteComplete = this.swithToAlert();
-		this.closeMns();
+		this.UpdateElementosTabla();
+		ArrayList<String> elementos = this.swithToAlert();
 		
-		return messageDeleteComplete;
 
-	}
+		return elementos;
 
-	private void closeMns() {
-		driver.findElement(closeMessage).click();
-		
-	}
-
-	private String swithToAlert() {
-		// Capturing alert message.
-				String alertMessage = driver.findElement(messageDelete).getText();
-				// Displaying alert message
-				System.out.println(alertMessage);
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		return alertMessage;
-	}
-
-	private void deleteBtn() {
-		driver.findElement(deleteArtistBtn).click();
-		
 	}
 
 	
+	private ArrayList<String> swithToAlert() {
+		// Capturing alert message.
+		String alertMessage = driver.findElement(messageDelete).getText();
+		ArrayList<String> elementos = new ArrayList<>();
+
+		elementos.add(alertMessage);
+
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return elementos;
+	}
+
+	private void UpdateElementosTabla() {
+		WebElement table_element = driver.findElement(tableArtist);
+		List<WebElement> tr_collection = table_element.findElements(By.xpath("//*[@id=\"artistaForm:tbl_data\"]/tr"));
+
+		System.out.println("NUMBER OF ROWS IN THIS TABLE = " + tr_collection.size());
+
+		By elem = By.xpath("//*[@id=\"artistaForm:tbl:" + (tr_collection.size() - 1) + ":j_idt38\"]/a[1]/span");
+
+		driver.findElement(elem).click();
+
+		String s = "//*[@id=\"artistaForm:tbl:2:deleteButton\"]";
+		System.out.println(s);
+		String deleteButton = "//*[@id=\"artistaForm:tbl:" + (tr_collection.size() - 1) + ":deleteButton\"]";
+		System.out.println(deleteButton);
+
+		driver.findElement(By.xpath(deleteButton)).click();
+
+		
+
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 }

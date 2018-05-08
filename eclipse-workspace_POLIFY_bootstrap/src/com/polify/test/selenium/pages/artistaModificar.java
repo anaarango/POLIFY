@@ -1,5 +1,6 @@
 package com.polify.test.selenium.pages;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -18,12 +19,11 @@ public class artistaModificar {
 	WebDriver driver;
 
 	By updateArtistBtn = By.className("ui-icon ui-icon-pencil");
-	By email = By.className("ui-cell-editor-output");
 	By acceptBtn = By.className("ui-row-editor-check");
 	By closeMessage = By.className("ui-growl-message");
+	By mensajeEdicion = By.xpath("//*[@id=\"artistaForm:msgs_container\"]/div/div/div[2]/span");
 	By tableArtist = By.xpath("//*[@id=\"artistaForm:tbl\"]/div[2]/table");
 	By clickEditar = By.xpath("//*[@id=\"artistaForm:tbl:31:j_idt38\"]/a[1]/span");
-	
 
 	String messageModifyArtista = "";
 
@@ -37,49 +37,43 @@ public class artistaModificar {
 
 	}
 
-	public String updateArtista(String email) {
+	public ArrayList<String> updateArtista() {
 
-		this.BuscarElementosTabla();
-		// this.changeBtn();
-		// this.ChangeArtistaData(email);
-		// this.submit();
-		// messageModifyArtista = this.swithToAlert();
-		// this.closeWindowMessage();
-		//
-		// return messageModifyArtista;
+		this.UpdateElementosTabla();
+		ArrayList<String> elementos = this.swithToAlert();
 
-		return null;
+		this.closeWindowMessage();
+
+		return elementos;
 
 	}
 
-	private void BuscarElementosTabla() {
+	private void UpdateElementosTabla() {
 		WebElement table_element = driver.findElement(tableArtist);
-		List<WebElement> tr_collection = table_element
-				.findElements(By.xpath("//*[@id=\"artistaForm:tbl_data\"]/tr"));;
+		List<WebElement> tr_collection = table_element.findElements(By.xpath("//*[@id=\"artistaForm:tbl_data\"]/tr"));
+		;
 
 		System.out.println("NUMBER OF ROWS IN THIS TABLE = " + tr_collection.size());
-		int row_num, col_num;
-		row_num = 1;
-
-		for (WebElement trElement : tr_collection) {
-			List<WebElement> td_collection = trElement.findElements(By.xpath("td"));
-			System.out.println("NUMBER OF COLUMNS=" + td_collection.size());
-			col_num = 1;
-			for (WebElement tdElement : td_collection) {
-				System.out.println("row # " + row_num + ", col # " + col_num + "text=" + tdElement.getText());
-
-				col_num++;
-			}
-			row_num++;
-		}
 		
+
+		By elem = By.xpath("//*[@id=\"artistaForm:tbl:" + (tr_collection.size() - 1) + ":j_idt38\"]/a[1]/span");
 		
-		By elem = By.xpath("//*[@id=\"artistaForm:tbl:"+(tr_collection.size()-1)+":j_idt38\"]/a[1]/span");;
-		//By elem = By.xpath("//*[@id=\"artistaForm:tbl:"+40+":j_idt38\"]/a[1]/span");;
 		driver.findElement(elem).click();
-		System.out.println("Ya dio click");;
-		driver.findElement(By.xpath("//*[@id=\"artistaForm:tbl:"+(tr_collection.size()-1)+":modelInputArtista\"]")).sendKeys("pedro");
-		driver.findElement(By.xpath("//*[@id=\"artistaForm:tbl:"+(tr_collection.size()-1)+":j_idt38\"]/a[2]/span")).click();
+		
+		driver.findElement(
+				By.xpath("//*[@id=\"artistaForm:tbl:" + (tr_collection.size() - 1) + ":modelInputArtista\"]")).clear();
+		driver.findElement(
+				By.xpath("//*[@id=\"artistaForm:tbl:" + (tr_collection.size() - 1) + ":modelInputArtista\"]"))
+				.sendKeys("pedro");
+		driver.findElement(
+				By.xpath("//*[@id=\"artistaForm:tbl:" + (tr_collection.size() - 1) + ":j_idt38\"]/a[2]/span")).click();
+		
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void closeWindowMessage() {
@@ -87,39 +81,19 @@ public class artistaModificar {
 
 	}
 
-	private void changeBtn() {
-		driver.findElement(updateArtistBtn).click();
 
-	}
-
-	private void submit() {
-		driver.findElement(acceptBtn).click();
-
-	}
-
-	private void ChangeArtistaData(String email2) {
-
-		driver.findElement(email).clear();
-		driver.findElement(email).sendKeys(email2);
-
-	}
-
-	private String swithToAlert() {
+	private ArrayList<String> swithToAlert() {
 
 		// Capturing alert message.
-		String alertMessage = driver.findElement(closeMessage).getText();
+		String alertMessage = driver.findElement(mensajeEdicion).getText();
+		ArrayList<String> elementos = new ArrayList<>();
+		
+		
+		
+		elementos.add(alertMessage);
+		
 
-		// Displaying alert message
-		System.out.println(alertMessage);
-		String lines[] = alertMessage.split("\\r?\\n");
-		String resultado = lines[1];
-		String mensajes[] = resultado.split(":");
-		String mensajeExito = mensajes[0];
-		String id = mensajes[1];
-
-		System.out.println("el mensaje de resultado operacion es: " + mensajeExito);
-		System.out.println("El ID de modificacion es: " + id);
-
+		
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
@@ -127,8 +101,6 @@ public class artistaModificar {
 			e.printStackTrace();
 		}
 
-		return mensajeExito;
-
+		return elementos;
 	}
-
 }

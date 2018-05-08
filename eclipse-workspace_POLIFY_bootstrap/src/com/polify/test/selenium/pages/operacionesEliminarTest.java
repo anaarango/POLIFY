@@ -12,19 +12,19 @@ import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-public class artistaEliminarTest {
+public class operacionesEliminarTest {
 
-	private static final String URL_WEB = "http://localhost:8080/eclipse-workspace_POLIFY_bootstrap/faces/crearArtista.xhtml";
+	private static final String URL_WEB = "http://localhost:8080/eclipse-workspace_POLIFY_bootstrap/faces/crearOperacion.xhtml";
 	private static final String WEBDRIVER_CHROME_DRIVER = "webdriver.chrome.driver";
 	private static final String DRIVER_PATH = "C:\\lib.selenium\\chromedriver.exe";
-	private static final String NOMBRE = "Bon Jovi";
-	private static final String EMAIL = "bonjovi@bonjovi.com";
-
+	private static final String FECHA_INICIO = "1/05/2018";
+	private static final String FECHA_FIN = "15/05/2018";
+	private static final String N_OPERACIONES = "100";
 	private WebDriver driver;
-	private artistaCrear artistaC;
-	private artistaEliminar artistaE;
-	private ArrayList<String> resultIdArtista;
+	private OperacionesCrear operacionesC;
+	private OperacionesEliminar operacionesE;
 	
+	private ArrayList<String> result = new ArrayList<>();
 	
 
 	// Setup Driver
@@ -41,21 +41,21 @@ public class artistaEliminarTest {
 
 	}
 	
-	public void testCreateArtista() {
+	public void testCreateOperacion() {
 
-		artistaC = new artistaCrear(driver);
+		operacionesC = new OperacionesCrear(driver);
 
-		resultIdArtista = artistaC.crearArtista(NOMBRE, EMAIL);
+		result = operacionesC.crearOperacion(FECHA_INICIO, FECHA_FIN, N_OPERACIONES);
 
 	}
 	@Test
-	public void testeDeleteArtista() {
-		this.testCreateArtista();
+	public void testeDeleteOperacion() {
+		this.testCreateOperacion();
 
-		artistaE = new artistaEliminar(driver);
-		ArrayList<String> message = artistaE.deleteArtista();
+		operacionesE = new OperacionesEliminar(driver);
+		ArrayList<String> message = operacionesE.deleteOperacion();
 		System.out.println(message.get(0));
-		assertTrue("Artista Deleted", message.get(0).equals("La eleminación del artista ha sido exitosa"));
+		assertTrue("Operacion eliminada", message.get(0).equals("Operación Eliminada exitosamente"));
 		
 		
 	}

@@ -12,19 +12,19 @@ import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-public class artistaModificarTest {
+public class OperacionesCrearTest {
 
-	private static final String URL_WEB = "http://localhost:8080/eclipse-workspace_POLIFY_bootstrap/faces/crearArtista.xhtml";
+	private static final String URL_WEB = "http://localhost:8080/eclipse-workspace_POLIFY_bootstrap/faces/crearOperacion.xhtml";
 	private static final String WEBDRIVER_CHROME_DRIVER = "webdriver.chrome.driver";
 	private static final String DRIVER_PATH = "C:\\lib.selenium\\chromedriver.exe";
-	private static final String NOMBRE = "Bon Jovi";
-	private static final String EMAIL = "bonjovi@bonjovi.com";
+	private static final String FECHA_INICIO = "1/05/2018";
+	private static final String FECHA_FIN = "15/05/2018";
+	private static final String N_OPERACIONES = "100";
 
 	private WebDriver driver;
-	private artistaCrear artistaC;
-	private artistaModificar artistaM;
+	private OperacionesCrear operacionesC;
+	private ArrayList<String> result = new ArrayList<>();
 	
-	private ArrayList<String> resultIdArtista = new ArrayList<>();
 
 	// Setup Driver
 	@BeforeClass
@@ -39,30 +39,21 @@ public class artistaModificarTest {
 		driver.get(URL_WEB);
 
 	}
-
-	
+	@Test
 	public void testCreateArtista() {
 
-		artistaC = new artistaCrear(driver);
+		operacionesC = new OperacionesCrear(driver);
 
-		resultIdArtista = artistaC.crearArtista(NOMBRE, EMAIL);
+		result = operacionesC.crearOperacion(FECHA_INICIO, FECHA_FIN, N_OPERACIONES);
 		
+		assertTrue("Operacion creada: ", result.get(0).equals("Operación creada exitosamente"));
 
 	}
-	@Test
-	public void testUpdateArtista() {
-		this.testCreateArtista();
-
-		artistaM = new artistaModificar(driver);
-		ArrayList<String> message = artistaM.updateArtista();
-		System.out.println(message.get(0));
-		assertTrue("Artista modificado", message.get(0).equals("Artista Editado exitosamente"));
-	}
-
+	
 	// Close Driver
-	@After
-	public void quitDriver() {
-		driver.quit();
-	}
+		@After
+		public void quitDriver() {
+			driver.quit();
+		}
 
 }

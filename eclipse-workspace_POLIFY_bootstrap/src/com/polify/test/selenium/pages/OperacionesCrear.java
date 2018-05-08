@@ -16,36 +16,35 @@ import org.openqa.selenium.support.ui.Select;
  *
  */
 
-public class artistaCrear {
+public class OperacionesCrear {
 
 	WebDriver driver;
 
-	By crearArtistBtn = By.name("artistaForm:crearArtista");
-	By nombreArtista = By.name("artistaForm:nombreArtistaInp");
-	By email = By.name("artistaForm:email");
-	By empDifusoraSelect = By.name("artistaForm:j_idt19");
-	By closeMessage = By.className("ui-growl-message");
-	//By closeMessage2 = By.xpath("//*[@id=\"artistaForm:msgs_container\"]/div/div/div[1]");
-	
-	
+	By fechaInicio = By.name("operacionesForm:fechaInicio_input");
+	By fechaFin = By.name("operacionesForm:fechaFin_input");
+	By nombreArtista = By.name("operacionesForm:j_idt15");
+	By nombreEmpresa = By.name("operacionesForm:j_idt20");
+	By nOperaciones = By.name("operacionesForm:numeroOperaciones");
+	By crearBtn = By.name("operacionesForm:j_idt27");
+	By tableOperaciones = By.id("operacionesForm:tbl");
+	By closeClick = By.xpath("//*[@id=\"operacionesForm:msgs_container\"]/div/div/div[1]");
+	By closeMessage = By.className("ui-growl-item");
 
-	By tableArtista = By.id("artistaForm:tbl");
-
-	String messageCrearArtista = "";
+	String messageCrearOperacion = "";
 
 	/**
 	 * @param driver,
 	 *            se recibe el driver para la ejecucion de selenium
 	 */
-	public artistaCrear(WebDriver driver) {
+	public OperacionesCrear(WebDriver driver) {
 
 		this.driver = driver;
 
 	}
 
-	public ArrayList<String> crearArtista(String nombreArtista, String email) {
+	public ArrayList<String> crearOperacion(String fechaInicio, String fechaFin, String nOperaciones) {
 
-		this.AddArtistaData(nombreArtista, email);
+		this.AddOperacionData(fechaInicio, fechaFin, nOperaciones);
 		this.submit();
 		ArrayList<String> elementos = this.swithToAlert();
 
@@ -56,43 +55,35 @@ public class artistaCrear {
 	}
 
 	private void closeWindowMessage() {
+		//System.out.println(closeMessage);
 		driver.findElement(closeMessage).click();
 
 	}
 
 	private void submit() {
-		driver.findElement(crearArtistBtn).click();
+		driver.findElement(crearBtn).click();
 
 	}
 
-	private void AddArtistaData(String nombreArtista2, String email2) {
+	private void AddOperacionData(String fechaInicio2, String fechaFin2, String nOperaciones2) {
 
-		driver.findElement(nombreArtista).clear();
-		driver.findElement(nombreArtista).sendKeys(nombreArtista2);
-
-		driver.findElement(email).clear();
-		driver.findElement(email).sendKeys(email2);
-
+		driver.findElement(fechaInicio).sendKeys(fechaInicio2);
+		driver.findElement(fechaFin).sendKeys(fechaFin2);
+		
+		// Se selecciona nombre del artista
+		Select nombreA = new Select(driver.findElement(nombreArtista));
+		nombreA.selectByVisibleText("Bon Jovi");
+		
 		// Se selecciona una empresa difusora
-		Select accountType = new Select(driver.findElement(empDifusoraSelect));
-		accountType.selectByVisibleText("Youtube");
+		Select nombreE = new Select(driver.findElement(nombreEmpresa));
+		nombreE.selectByVisibleText("Youtube");
+		
+		//Diligenciar el numero de operaciones
+		//driver.findElement(nOperaciones).clear();
+		driver.findElement(nOperaciones).sendKeys(nOperaciones2);
 
 	}
 
-//	private ArrayList<String> getArtistaId() {
-//
-//		WebElement table_element = driver.findElement(tableArtista);
-//		List<WebElement> td_collection = table_element
-//				.findElements(By.xpath("//*[@id=\"artistaForm:tbl:j_idt24\"]/span"));
-//
-//		int size = td_collection.size();
-//
-//		for (int x = 0; x < td_collection.size(); x++) {
-//			table_element = td_collection.get(x);
-//		}
-//
-//		return null;
-//	}
 
 	private ArrayList<String> swithToAlert() {
 		
@@ -104,8 +95,10 @@ public class artistaCrear {
 		String lines[] = alertMessage.split("\\r?\\n");
 		String resultado = lines[1];
 		String mensajes[] = resultado.split(":");
-		String mensajeExito = mensajes[0];
-		String id = mensajes[1];
+		String mensajeExito = lines[0];
+		
+		String[] splited = mensajes[1].split("\\s+");
+		String id = splited[1];
 		
 		elementos.add(mensajeExito);
 		elementos.add(id);
