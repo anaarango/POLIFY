@@ -35,20 +35,22 @@
 						<div class="form-group">
 							<h:outputLabel For="fechaInicio" value="Fecha Inicial"
 								styleClass="control-label col-sm-2" />
-							<p:calendar id="fechaInicio"
+							<p:calendar id="startDate"
 								value="#{operacionesBean.operaciones.fecha_inicial}"
-								showOn="button" />
+								showOn="button" > 
+								<p:ajax event="dateSelect" update="startDate" />
+								</p:calendar>
 							<div class="col-sm-10"></div>
 						</div>
 						<div class="form-group">
-							<h:outputLabel For="fechaFin" value="Fecha Fin"
+							<h:outputLabel For="endDate" value="Fecha Fin"
 								styleClass="control-label col-sm-2" />
-							<p:calendar id="fechaFin"
+							<p:calendar id="endDate"
 								value="#{operacionesBean.operaciones.fecha_final}"
 								showOn="button" required="true">
 								<f:attribute name="startDate"
-									value="#{operacionesBean.operaciones.fecha_final}" />
-								<f:validator validatorId="primeDateRangeValidator" />
+									value="#{operacionesBean.operaciones.fecha_inicial}" />
+								<f:validator validatorId="validadorFechas"></f:validator>
 							</p:calendar>
 							<div class="col-sm-10"></div>
 						</div>

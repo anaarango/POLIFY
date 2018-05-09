@@ -1,6 +1,7 @@
 package com.polify.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -35,25 +36,44 @@ public class OperacionesBean {
 	}
 
 	public void crearOperacionesForm() {
-		DaoOperaciones daoOperaciones = new DaoOperaciones();
 
-		operaciones.setId_usuario(12);
+		if (validarCampos()) {
 
-		if (daoOperaciones.save(operaciones)) {
-			operacionesList = operacionesController.consultarArtistasEmpresas();
-			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Operación creada exitosamente",
-					"La operacion " + "  con ID: "
-							+ operacionesList.get(operacionesList.size()-1).getOperaciones().getId_operaciones()
-							+ " ha sido creado de forma exitosa");
-			FacesContext.getCurrentInstance().addMessage(null, msg);
-		} else {
-			operacionesList = operacionesController.consultarArtistasEmpresas();
-			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al crear la operación",
-					" No se ha podido crear la operacion");
-			FacesContext.getCurrentInstance().addMessage(null, msg);
+			DaoOperaciones daoOperaciones = new DaoOperaciones();
+
+			operaciones.setId_usuario(12);
+
+			if (daoOperaciones.save(operaciones)) {
+				operacionesList = operacionesController.consultarArtistasEmpresas();
+				FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Operación creada exitosamente",
+						"La operacion " + "  con ID: "
+								+ operacionesList.get(operacionesList.size() - 1).getOperaciones().getId_operaciones()
+								+ " ha sido creado de forma exitosa");
+				FacesContext.getCurrentInstance().addMessage(null, msg);
+			} else {
+				operacionesList = operacionesController.consultarArtistasEmpresas();
+				FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al crear la operación",
+						" No se ha podido crear la operacion");
+				FacesContext.getCurrentInstance().addMessage(null, msg);
+			}
 		}
-		
 
+	}
+
+	private boolean validarCampos() {
+
+		Date startDate = (Date) operaciones.getFecha_inicial();
+		Date endDate = (Date) operaciones.getFecha_final();
+		if (endDate.before(startDate)) {
+
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"La fecha de inicio ingresada debe ser menor a: " + endDate, " Error en las fechas");
+			FacesContext.getCurrentInstance().addMessage("empresaForm", msg);
+			return false;
+
+		}
+
+		return true;
 	}
 
 	public Operaciones getOperaciones() {
@@ -84,13 +104,11 @@ public class OperacionesBean {
 		DaoOperaciones daoOperaciones = new DaoOperaciones();
 		if (daoOperaciones.delete(operaciones.getId_operaciones())) {
 			FacesMessage msg = new FacesMessage("Operación Eliminada exitosamente",
-					"La operacióncon ID: "
-							+ operaciones.getId_operaciones() + " ha sido eliminada de forma exitosa");
+					"La operacióncon ID: " + operaciones.getId_operaciones() + " ha sido eliminada de forma exitosa");
 			FacesContext.getCurrentInstance().addMessage("empresaForm", msg);
 		} else {
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al eliminar la empresa",
-					"La opeacion con ID: "
-							+ operaciones.getId_operaciones()
+					"La opeacion con ID: " + operaciones.getId_operaciones()
 							+ " No ha sido elminada de forma exitosa, Existen registros enlazados esta operación");
 			FacesContext.getCurrentInstance().addMessage("empresaForm", msg);
 		}
@@ -110,16 +128,14 @@ public class OperacionesBean {
 
 		this.operacionesList = this.operacionesController.consultarArtistasEmpresas();
 
-		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,"Operacion Editada exitosamente",
-				"La operación con ID: "
-						+ + oper.getId_operaciones()
-						+ " ha sido actualizado de forma exitosa");				
+		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Operacion Editada exitosamente",
+				"La operación con ID: " + +oper.getId_operaciones() + " ha sido actualizado de forma exitosa");
 		FacesContext.getCurrentInstance().addMessage("empresaForm", msg);
 	}
 
 	public void onRowCancel(RowEditEvent event) {
-		
-		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN,"La edición ha sido cancelada",
+
+		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "La edición ha sido cancelada",
 				((OperacionesArtistaEmpresaDTO) event.getObject()).getEmpresa().getId_empresa_difusora().toString());
 		FacesContext.getCurrentInstance().addMessage("empresaForm", msg);
 	}
