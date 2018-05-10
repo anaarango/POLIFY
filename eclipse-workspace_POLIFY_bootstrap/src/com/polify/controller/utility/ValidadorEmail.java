@@ -21,7 +21,7 @@ public class ValidadorEmail implements Validator {
 		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailIngresado);
 		if(!matcher.find()){
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Email invalido",
-					"El email: " + emailIngresado + " no es un email valido");
+					"El email: " + emailIngresado + " ,no es un email valido");
 			throw new ValidatorException(msg);
 		}
 		

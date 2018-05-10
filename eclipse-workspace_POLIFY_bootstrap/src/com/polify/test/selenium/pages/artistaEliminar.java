@@ -73,8 +73,8 @@ public class artistaEliminar {
 
 		driver.findElement(elem).click();
 
-		String s = "//*[@id=\"artistaForm:tbl:2:deleteButton\"]";
-		System.out.println(s);
+		//String s = "//*[@id=\"artistaForm:tbl:2:deleteButton\"]";
+		//System.out.println(s);
 		String deleteButton = "//*[@id=\"artistaForm:tbl:" + (tr_collection.size() - 1) + ":deleteButton\"]";
 		System.out.println(deleteButton);
 

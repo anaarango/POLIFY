@@ -36,8 +36,9 @@
 					<div class="form-group">
 						<h:outputLabel value="Nombre" styleClass="control-label col-sm-2" />
 						<div class="col-sm-10">
-							<h:inputText id="nombreArtistaInp" value="#{artistaBean.artista.nombre_artista}"
-								styleClass="form-control" required="true" label="Nombre Artista">
+							<h:inputText id="nombreArtistaInp"
+								value="#{artistaBean.artista.nombre_artista}"
+								styleClass="form-control"  label="Nombre Artista">
 
 							</h:inputText>
 							<p:message for="nombreArtistaInp" />
@@ -47,7 +48,7 @@
 						<h:outputLabel value="email" styleClass="control-label col-sm-2" />
 						<div class="col-sm-10">
 							<h:inputText id="email" value="#{artistaBean.artista.email}"
-								styleClass="form-control" required="true" label="Email">
+								styleClass="form-control"  label="Email">
 								<f:validator validatorId="emailValidator"></f:validator>
 							</h:inputText>
 							<p:message for="email" />
@@ -78,88 +79,90 @@
 
 
 					<div>
-
-						<p:growl id="msgs" showDetail="true" sticky="true" />
-
-
-						<p:dataTable id="tbl" var="artEmp"
-							value="#{artistaBean.artistasEmpresa}" editable="true"
-							styleClass="table table-bordered table-striped tableOutput">
-							<f:facet name="header">Artistas</f:facet>
-							<p:ajax event="rowEdit" listener="#{artistaBean.onRowEdit}"
-								update=":artistaForm:msgs" />
-							<p:ajax event="rowEditCancel"
-								listener="#{artistaBean.onRowCancel}" update=":artistaForm:msgs" />
+					
+							<p:growl id="msgs" showDetail="true" sticky="true" />
 
 
-							<p:column headerText="Id" style="width:32px">
-
-								<h:outputText value="#{artEmp.artista.id_artista}" />
-
-							</p:column>
-
-							<p:column headerText="Nombre Artista">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{artEmp.artista.nombre_artista}" />
-									</f:facet>
-									<f:facet name="input">
-										<p:inputText id="modelInputArtista"
-											value="#{artEmp.artista.nombre_artista}" style="width:100%" />
-									</f:facet>
-								</p:cellEditor>
-
-							</p:column>
-
-							<p:column headerText="Email">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{artEmp.artista.email}" />
-									</f:facet>
-									<f:facet name="input">
-										<p:inputText id="modelInput" value="#{artEmp.artista.email}"
-											style="width:100%" />
-									</f:facet>
-								</p:cellEditor>
-
-							</p:column>
+							<p:dataTable id="tbl" var="artEmp"
+								value="#{artistaBean.artistasEmpresa}" editable="true"
+								styleClass="table table-bordered table-striped tableOutput">
+								<f:facet name="header">Artistas</f:facet>
+								<p:ajax event="rowEdit" listener="#{artistaBean.onRowEdit}"
+									update=":artistaForm:msgs" />
+								<p:ajax event="rowEditCancel"
+									listener="#{artistaBean.onRowCancel}"
+									update=":artistaForm:msgs" />
 
 
+								<p:column headerText="Id" style="width:32px">
 
-							<p:column headerText="Empresa Difusora">
+									<h:outputText value="#{artEmp.artista.id_artista}" />
 
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{artEmp.empresa.nombre_empresa}" />
-									</f:facet>
-									<f:facet name="input">
-										<h:selectOneMenu value="#{artEmp.empresa.id_empresa_difusora}"
-											style="width:100%">
-											<f:selectItems
-												value="#{artistaBean.artistaController.empresa}" var="man"
-												itemLabel="#{man.nombre_empresa}"
-												itemValue="#{man.id_empresa_difusora}" />
-										</h:selectOneMenu>
-									</f:facet>
-								</p:cellEditor>
+								</p:column>
 
-							</p:column>
-							<p:column style="width:80px" headerText="Update">
-								<p:rowEditor />
-							</p:column>
-							<p:column style="width:80px">
-								<f:facet name="header">Delete</f:facet>
-								<h:commandButton id="deleteButton" styleClass="button"
-									image="/resources/icons//delete.png"
-									action="#{artistaBean.deleteArtistaForm}">
-									<f:setPropertyActionListener target="#{artistaBean.artista}"
-										value="#{artEmp.artista}" />
-								</h:commandButton>
-							</p:column>
+								<p:column headerText="Nombre Artista">
+									<p:cellEditor>
+										<f:facet name="output">
+											<h:outputText value="#{artEmp.artista.nombre_artista}" />
+										</f:facet>
+										<f:facet name="input">
+											<p:inputText id="modelInputArtista"
+												value="#{artEmp.artista.nombre_artista}" style="width:100%" />
+										</f:facet>
+									</p:cellEditor>
 
-						</p:dataTable>
+								</p:column>
 
+								<p:column headerText="Email">
+									<p:cellEditor>
+										<f:facet name="output">
+											<h:outputText value="#{artEmp.artista.email}" />
+										</f:facet>
+										<f:facet name="input">
+											<p:inputText id="modelInput" value="#{artEmp.artista.email}"
+												style="width:100%" />
+										</f:facet>
+									</p:cellEditor>
+
+								</p:column>
+
+
+
+								<p:column headerText="Empresa Difusora">
+
+									<p:cellEditor>
+										<f:facet name="output">
+											<h:outputText value="#{artEmp.empresa.nombre_empresa}" />
+										</f:facet>
+										<f:facet name="input">
+											<h:selectOneMenu
+												value="#{artEmp.empresa.id_empresa_difusora}"
+												style="width:100%">
+												<f:selectItems
+													value="#{artistaBean.artistaController.empresa}" var="man"
+													itemLabel="#{man.nombre_empresa}"
+													itemValue="#{man.id_empresa_difusora}" />
+											</h:selectOneMenu>
+										</f:facet>
+									</p:cellEditor>
+
+								</p:column>
+								<p:column style="width:80px" headerText="Update">
+									<p:rowEditor />
+								</p:column>
+								<p:column style="width:80px">
+									<f:facet name="header">Delete</f:facet>
+									<h:commandButton id="deleteButton" styleClass="button"
+										image="/resources/icons//delete.png"
+										action="#{artistaBean.deleteArtistaForm}">
+										<f:setPropertyActionListener target="#{artistaBean.artista}"
+											value="#{artEmp.artista}" />
+									</h:commandButton>
+								</p:column>
+
+							</p:dataTable>
 					</div>
+					
 
 				</h:form>
 

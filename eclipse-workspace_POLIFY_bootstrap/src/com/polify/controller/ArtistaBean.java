@@ -106,7 +106,7 @@ public class ArtistaBean {
 		artistasEmpresa = artistaController.consultarArtistasEmpresas();
 
 		FacesContext facesContext = FacesContext.getCurrentInstance();
-		FacesMessage facesMessage = new FacesMessage("Creacion de Artista",
+		FacesMessage facesMessage = new FacesMessage("Eliminación de Artista",
 				"La eleminación del artista ha sido exitosa");
 		facesContext.addMessage("artistaForm", facesMessage);
 
