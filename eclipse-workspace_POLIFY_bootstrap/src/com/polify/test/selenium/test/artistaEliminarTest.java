@@ -1,4 +1,4 @@
-package com.polify.test.selenium.pages;
+package com.polify.test.selenium.test;
 
 import static org.junit.Assert.assertTrue;
 
@@ -11,6 +11,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+
+import com.polify.test.selenium.pages.artistaCrear;
+import com.polify.test.selenium.pages.artistaEliminar;
 
 public class artistaEliminarTest {
 
