@@ -1,0 +1,163 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta charset="utf-8" name="viewport"
+		content="width=device-width, initial-scale=1"
+		http-equiv="X-UA-Conpatible" />
+	<h:outputStylesheet library="css" name="bootstrap.min.css" />
+	<title>Crear nuevo Usuario</title>
+	<style type="text/css">
+.col-xs-updated {
+	width: 92% !important;
+}
+.button {
+    /* resize images */
+
+    width: 30%;
+    height: auto;
+
+}
+</style>
+
+</h:head>
+<h:body>
+	<div class="container">
+		<div class="navbar navbar-inverse">
+			<div class="navbar-brand">Crear nuevo Usuario</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-xs-updated">
+				<h:form id="usuarioForm" styleClass="form-horizontal">
+
+
+					
+					<div class="form-group">
+						<h:outputLabel value="Rol"
+							styleClass="control-label col-sm-2" />
+						<div class="col-sm-10">
+							<h:selectOneMenu
+								value="#{usuarioBean.usuario.id_rol}"
+								style="width:100%">
+								<f:selectItems value="#{rolBean.rolesList}"
+									var="man" itemLabel="#{man.nombre_rol}"
+									itemValue="#{man.id_rol}" />
+							</h:selectOneMenu>
+						</div>
+					</div>
+					<div class="form-group">
+						<h:outputLabel value="Nombre" styleClass="control-label col-sm-2" />
+						<div class="col-sm-10">
+							<h:inputText value="#{usuarioBean.usuario.nombre_usuario}"
+								styleClass="form-control" />
+						</div>
+					</div>
+					<div class="form-group">
+						<h:outputLabel value="email" styleClass="control-label col-sm-2" />
+						<div class="col-sm-10">
+							<h:inputText value="#{usuarioBean.usuario.email}"
+								styleClass="form-control" />
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+
+							<h:commandButton id="crearUsuario" value="Crear"
+								action="#{usuarioBean.createUsuarioForm}"
+								styleClass="btn btn-default" />
+						</div>
+					</div>
+
+
+					<div>
+
+						<p:growl id="msgs" showDetail="true" sticky="true" />
+
+
+						<p:dataTable id="tbl" var="usu"
+							value="#{usuarioBean.usuariosList}" editable="true"
+							styleClass="table table-bordered table-striped tableOutput">
+							<f:facet name="header">Usuarios</f:facet>
+							<p:ajax event="rowEdit" listener="#{usuarioBean.onRowEdit}"
+								update=":usuarioForm:msgs" />
+							<p:ajax event="rowEditCancel"
+								listener="#{usuarioBean.onRowCancel}" update=":usuarioForm:msgs" />
+
+
+							<p:column headerText="Id" style="width:32px">
+
+								<h:outputText value="#{usu.id_usuario}" />
+
+							</p:column>
+
+							<p:column headerText="Nombre Usuario">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{usu.nombre_usuario}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="modelInputUsuario"
+											value="#{usu.nombre_usuario}" style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+
+							</p:column>
+							
+							<p:column headerText="Rol">
+
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{usu.id_rol}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="modelInputRol"
+											value="#{usu.id_rol}" style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+
+							</p:column>
+	
+							<p:column headerText="Email">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{usu.email}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="modelInput" value="#{usu.email}"
+											style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+
+							</p:column>
+
+
+
+							
+							<p:column style="width:80px" headerText="Update">
+								<p:rowEditor />
+							</p:column>
+							<p:column style="width:80px">
+								<f:facet name="header">Delete</f:facet>
+								<h:commandButton id="deleteButton" styleClass="button"
+									image="/resources/icons//delete.png"
+									action="#{usuarioBean.deleteUsuarioForm}">
+									<f:setPropertyActionListener target="#{usuarioBean.usuario}"
+										value="#{usu}" />
+								</h:commandButton>
+							</p:column>
+
+						</p:dataTable>
+
+					</div>
+
+				</h:form>
+
+
+			</div>
+		</div>
+	</div>
+</h:body>
+</html>
