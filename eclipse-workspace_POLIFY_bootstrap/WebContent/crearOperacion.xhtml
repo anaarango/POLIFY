@@ -1,63 +1,241 @@
 <!DOCTYPE HTML>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
 
 <h:head>
 	<meta charset="utf-8" name="viewport"
 		content="width=device-width, initial-scale=1"
 		http-equiv="X-UA-Conpatible" />
 	<h:outputStylesheet library="css" name="bootstrap.min.css" />
-	<title>Ingresar Operacion</title>
+	<title>Gestionar Operacion</title>
 	<style type="text/css">
 .col-xs-updated {
 	width: 92% !important;
+}
+
+.button {
+	/* resize images */
+	width: 30%;
+	height: auto;
 }
 </style>
 </h:head>
 <h:body>
 	<div class="container">
 		<div class="navbar navbar-inverse">
-			<div class="navbar-brand">Ingresa nueva operación</div>
+			<div class="navbar-brand">Gestionar Operaciones</div>
 		</div>
 		<div class="row">
 			<div class="col-xs-12 col-xs-updated">
 				<h:form id="operacionesForm" styleClass="form-horizontal">
-					<div class="form-group">
-						<h:outputLabel For="fechaInicio" value="Fecha Inicial" />
-						<p:calendar id="fechaInicio"
-							value="#{operacionesBean.operaciones.fecha_inicial}"
-							showOn="button" />
-						<div class="col-sm-10"></div>
-					</div>
-					<div class="form-group">
-						<h:outputLabel For="fechaFin" value="Fecha Fin" />
-						<p:calendar id="fechaFin"
-							value="#{operacionesBean.operaciones.fecha_final}"
-							showOn="button" />
-						<div class="col-sm-10"></div>
-					</div>
-					<div class="form-group">
-						<h:outputLabel value="Nombre Artista" styleClass="control-label col-sm-2" />
-						<div class="col-sm-10">
-							<h:inputText value="#{operacionesBean.operaciones.id_artista}"
-								styleClass="form-control" />
+					<p:panel id="panel" header="Nueva Operacion">
+						<p:messages id="msgs2" showDetail="true" />
+						<div class="form-group">
+							<h:outputLabel For="fechaInicio" value="Fecha Inicial"
+								styleClass="control-label col-sm-2" />
+							<p:calendar id="startDate"
+								value="#{operacionesBean.operaciones.fecha_inicial}"
+								showOn="button" > 
+								<p:ajax event="dateSelect" update="startDate" />
+								</p:calendar>
+							<div class="col-sm-10"></div>
 						</div>
-					</div>
-					<div class="form-group">
-						<h:outputLabel value="Numero de operaciones"
-							styleClass="control-label col-sm-2" />
-						<div class="col-sm-10">
-							<h:inputText value="#{operacionesBean.operaciones.numero_operaciones}"
-								styleClass="form-control" />
+						<div class="form-group">
+							<h:outputLabel For="endDate" value="Fecha Fin"
+								styleClass="control-label col-sm-2" />
+							<p:calendar id="endDate"
+								value="#{operacionesBean.operaciones.fecha_final}"
+								showOn="button" required="true">
+								<f:attribute name="startDate"
+									value="#{operacionesBean.operaciones.fecha_inicial}" />
+								<f:validator validatorId="validadorFechas"></f:validator>
+							</p:calendar>
+							<div class="col-sm-10"></div>
 						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-sm-offset-2 col-sm-10">
-							<h:commandButton value="Crear"
-								action="#{operacionesBean.crearOperacionesForm}"
-								styleClass="btn btn-default" />
+						<div class="form-group">
+							<h:outputLabel value="Nombre Artista"
+								styleClass="control-label col-sm-2" />
+							<div class="col-sm-10">
+								<h:selectOneMenu
+									value="#{operacionesBean.operaciones.id_artista}"
+									style="width:100%" required="true">
+									<f:selectItems
+										value="#{operacionesBean.operacionesController.artistas}"
+										var="man" itemLabel="#{man.nombre_artista}"
+										itemValue="#{man.id_artista}" />
+								</h:selectOneMenu>
+							</div>
 						</div>
+
+						<div class="form-group">
+							<h:outputLabel value="Nombre Empresa"
+								styleClass="control-label col-sm-2" />
+							<div class="col-sm-10">
+								<h:selectOneMenu
+									value="#{operacionesBean.operaciones.id_empresa_difusora}"
+									style="width:100%" required="true">
+									<f:selectItems
+										value="#{operacionesBean.operacionesController.empresa}"
+										var="emp" itemLabel="#{emp.nombre_empresa}"
+										itemValue="#{emp.id_empresa_difusora}" />
+								</h:selectOneMenu>
+							</div>
+						</div>
+
+
+						<div class="form-group">
+							<p:outputLabel for="numeroOperaciones"
+								value="Numero de operaciones"
+								styleClass="control-label col-sm-2" />
+							<div class="col-sm-10">
+								<h:inputText id="numeroOperaciones"
+									value="#{operacionesBean.operaciones.numero_operaciones}"
+									styleClass="form-control" required="true"
+									label="numeroOperaciones">
+									<f:validateLength minimum="1" />
+								</h:inputText>
+								<p:message for="numeroOperaciones" display="icon" />
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-2 col-sm-10">
+								<h:commandButton value="Crear"
+									action="#{operacionesBean.crearOperacionesForm}"
+									styleClass="btn btn-default" update="panel" icon="ui-icon-check"/>
+							</div>
+						</div>
+					</p:panel>
+
+					<div>
+
+						<p:growl id="msgs" showDetail="true" sticky="true" />
+
+
+						<p:dataTable id="tbl" var="oper"
+							value="#{operacionesBean.operacionesList}" editable="true"
+							styleClass="table table-bordered table-striped tableOutput">
+							<f:facet name="header">Operaciones</f:facet>
+							<p:ajax event="rowEdit" listener="#{operacionesBean.onRowEdit}"
+								update=":operacionesForm:msgs" />
+							<p:ajax event="rowEditCancel"
+								listener="#{operacionesBean.onRowCancel}"
+								update=":operacionesForm:msgs" />
+
+
+							<p:column headerText="Id" style="width:32px">
+
+								<h:outputText value="#{oper.operaciones.id_operaciones}" />
+
+							</p:column>
+
+							<p:column headerText="Empresa Difusora">
+
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{oper.empresa.nombre_empresa}" />
+									</f:facet>
+									<f:facet name="input">
+										<h:selectOneMenu value="#{oper.empresa.id_empresa_difusora}"
+											style="width:100%">
+											<f:selectItems
+												value="#{operacionesBean.operacionesController.empresa}"
+												var="emp" itemLabel="#{emp.nombre_empresa}"
+												itemValue="#{emp.id_empresa_difusora}" />
+										</h:selectOneMenu>
+									</f:facet>
+								</p:cellEditor>
+
+							</p:column>
+
+							<p:column headerText="Artista">
+
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{oper.artista.nombre_artista}" />
+									</f:facet>
+									<f:facet name="input">
+										<h:selectOneMenu value="#{oper.artista.id_artista}"
+											style="width:100%">
+											<f:selectItems
+												value="#{operacionesBean.operacionesController.artistas}"
+												var="art" itemLabel="#{art.nombre_artista}"
+												itemValue="#{art.id_artista}" />
+										</h:selectOneMenu>
+									</f:facet>
+								</p:cellEditor>
+
+							</p:column>
+
+							<p:column headerText="Numero Operaciones">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{oper.operaciones.numero_operaciones}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText id="modelInput"
+											value="#{oper.operaciones.numero_operaciones}"
+											style="width:100%" />
+									</f:facet>
+								</p:cellEditor>
+
+							</p:column>
+
+							<p:column headerText="Fecha Inicial">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{oper.operaciones.fecha_inicial}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:calendar id="fechaInicioTbl"
+											value="#{oper.operaciones.fecha_inicial}" showOn="button" />
+										<div class="col-sm-10"></div>
+									</f:facet>
+								</p:cellEditor>
+
+							</p:column>
+
+							<p:column headerText="Fecha final">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{oper.operaciones.fecha_final}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:calendar id="fechaFinTbl"
+											value="#{oper.operaciones.fecha_final}" showOn="button" />
+										<div class="col-sm-10"></div>
+									</f:facet>
+								</p:cellEditor>
+
+							</p:column>
+
+
+
+
+
+
+							<p:column style="width:80px" headerText="Update">
+								<p:rowEditor />
+							</p:column>
+							<p:column style="width:80px">
+								<f:facet name="header">Delete</f:facet>
+								<h:commandButton id="deleteButton" styleClass="button"
+									image="/resources/icons//delete.png"
+									action="#{operacionesBean.deleteOperacionesForm}">
+									<f:setPropertyActionListener
+										target="#{operacionesBean.operaciones}"
+										value="#{oper.operaciones}" />
+								</h:commandButton>
+							</p:column>
+
+						</p:dataTable>
+
 					</div>
+
+
+
+
 				</h:form>
 			</div>
 		</div>

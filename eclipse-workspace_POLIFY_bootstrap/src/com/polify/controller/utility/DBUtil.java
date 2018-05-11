@@ -20,7 +20,7 @@ public class DBUtil {
 
 	           String nombreUsuario = "bd_polify";
 	            String password = "1234";
-	            String url = "jdbc:oracle:thin:@localhost:49161:XE";
+	            String url = "jdbc:oracle:thin:@localhost:1521:XE";
 	            conexion = DriverManager.getConnection(url, nombreUsuario, password);
 	            System.out.println("Conexión establecida satisfactoriamente");
 	        } catch (ClassNotFoundException ex) {

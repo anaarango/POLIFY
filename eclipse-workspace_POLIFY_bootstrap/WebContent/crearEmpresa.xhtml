@@ -71,7 +71,7 @@
 						<p:dataTable id="tbl" var="emp"
 							value="#{empresaDifusoraBean.empresaList}" editable="true"
 							styleClass="table table-bordered table-striped tableOutput">
-							<f:facet name="header">Artistas</f:facet>
+							<f:facet name="header">Empresas de difusión</f:facet>
 							<p:ajax event="rowEdit" listener="#{empresaDifusoraBean.onRowEdit}"
 								update=":empresaForm:msgs" />
 							<p:ajax event="rowEditCancel"

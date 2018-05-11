@@ -105,13 +105,13 @@ public class DaoArtistaTest {
 	public void testSave() {
 		DaoArtista daoArtista = new DaoArtista();
 		Artista artista = new Artista(2, "Juanes", 1, "juanes@gmail.com");
-		try {
+		//try {
 			boolean resultado = daoArtista.save(artista);
 			assertTrue("Artista guardado", resultado);
-		} catch (Exception e) {
+		//} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			//e.printStackTrace();
+		//}
 	}
 
 	/**
