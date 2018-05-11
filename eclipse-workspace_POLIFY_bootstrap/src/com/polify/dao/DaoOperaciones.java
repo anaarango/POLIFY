@@ -1,5 +1,6 @@
 package com.polify.dao;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,6 +22,8 @@ import oracle.jdbc.OracleTypes;
 public class DaoOperaciones {
 
 	private Connection conexion;
+	
+	
 
 	public DaoOperaciones() {
 		super();
@@ -33,7 +36,7 @@ public class DaoOperaciones {
 		Statement stmt = null;
 
 		try {
-
+			
 			stmt = conexion.createStatement();
 			String sql = "SELECT * " + " FROM OPERACIONES";
 			rs = stmt.executeQuery(sql);
@@ -62,6 +65,7 @@ public class DaoOperaciones {
 				if (rs != null) {
 					rs.close();
 				}
+				
 
 			} catch (SQLException e2) {
 				e2.printStackTrace();
@@ -75,7 +79,7 @@ public class DaoOperaciones {
 		String sql = "DELETE FROM OPERACIONES WHERE ID_OPERACIONES='" + id_operaciones + "'";
 		PreparedStatement ps = null;
 		try {
-
+			
 			ps = conexion.prepareStatement(sql);
 			ps.executeUpdate();
 			return true;
@@ -87,6 +91,8 @@ public class DaoOperaciones {
 			if (ps != null) {
 				ps.close();
 			}
+
+			
 
 		} catch (SQLException e2) {
 			e2.printStackTrace();
@@ -101,7 +107,7 @@ public class DaoOperaciones {
 
 			String sql = "INSERT INTO OPERACIONES ( ID_OPERACIONES ,ID_ARTISTA, ID_EMPRESA_DIFUSORA, ID_USUARIO, NUMERO_OPERACIONES, FECHA_INICIAL, FEHA_FINAL)"
 					+ " VALUES(ID_OPERACIONES_SEQUENCE.NEXTVAL,?,?,?,?,?,?)";
-
+			
 			ps = conexion.prepareStatement(sql);
 			ps.setInt(1, operaciones.getId_artista());
 			ps.setInt(2, operaciones.getId_empresa_difusora());
@@ -127,6 +133,7 @@ public class DaoOperaciones {
 					ps.close();
 				}
 
+				
 			} catch (SQLException e2) {
 				e2.printStackTrace();
 			}
@@ -139,7 +146,7 @@ public class DaoOperaciones {
 		PreparedStatement ps = null;
 
 		try {
-
+			
 			String sql = "UPDATE OPERACIONES SET ID_ARTISTA = ? , ID_EMPRESA_DIFUSORA = ?, ID_USUARIO = ? , "
 					+ "NUMERO_OPERACIONES = ?, FECHA_INICIAL = ? , FEHA_FINAL = ?  WHERE ID_OPERACIONES = ? ";
 
@@ -233,7 +240,6 @@ public class DaoOperaciones {
 				e2.printStackTrace();
 			}
 		}
-
 		return operacionesList;
 	}
 	
