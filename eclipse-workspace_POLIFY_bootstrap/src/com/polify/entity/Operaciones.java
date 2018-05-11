@@ -13,6 +13,12 @@ public class Operaciones {
 	private Date fecha_final;
 	private boolean canEdit;
 
+	//Datos para reporte por totales de artista
+		private int total;
+		private String nombre_artista;
+		private String nombre_empresa;
+		private int rankNumber;
+	
 	public int getId_operaciones() {
 		return id_operaciones;
 	}
@@ -92,6 +98,70 @@ public class Operaciones {
 
 	public Operaciones() {
 		super();
+	}
+	
+	public int getTotal() {
+		return total;
+	}
+
+	public void setTotal(int total) {
+		this.total = total;
+	}
+	
+	
+	
+	public String getNombre_artista() {
+		return nombre_artista;
+	}
+
+	public void setNombre_artista(String nombre_artista) {
+		this.nombre_artista = nombre_artista;
+	}
+
+	public String getNombre_empresa() {
+		return nombre_empresa;
+	}
+
+	public void setNombre_empresa(String nombre_empresa) {
+		this.nombre_empresa = nombre_empresa;
+	}
+
+	
+	public int getRankNumber() {
+		return rankNumber;
+	}
+
+	public void setRankNumber(int rankNumber) {
+		this.rankNumber = rankNumber;
+	}
+
+	public Operaciones(int id_artista, String nombre_artista,
+			String nombre_empresa, int total) {
+		super();
+		this.id_artista = id_artista;
+		this.nombre_artista = nombre_artista;
+		this.nombre_empresa = nombre_empresa;
+		this.total = total;
+		this.canEdit = true;
+	}
+
+	public Operaciones(int id_empresa_difusora, String nombre_artista,String nombre_empresa, int numero_operaciones,int total) {
+		super();
+		this.id_empresa_difusora = id_empresa_difusora;
+		this.nombre_artista = nombre_artista;
+		this.nombre_empresa = nombre_empresa;
+		this.numero_operaciones = numero_operaciones;
+		this.total = total;
+		this.canEdit = true;
+	}
+	
+	public Operaciones(String nombre_artista,String nombre_empresa,int total,int rankingNumber) {
+		super();
+		this.nombre_artista = nombre_artista;
+		this.nombre_empresa = nombre_empresa;
+		this.total = total;
+		this.rankNumber = rankingNumber;
+		this.canEdit = true;
 	}
 
 }
