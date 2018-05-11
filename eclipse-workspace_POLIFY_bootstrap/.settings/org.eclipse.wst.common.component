@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="eclipse-workspace_POLIFY_bootstrap">
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <property name="context-root" value="eclipse-workspace_POLIFY_bootstrap"/>
+        <property name="java-output-path" value="/eclipse-workspace_POLIFY_bootstrap/build/classes"/>
+    </wb-module>
+</project-modules>
