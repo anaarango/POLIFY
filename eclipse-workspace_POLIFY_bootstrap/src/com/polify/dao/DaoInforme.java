@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -56,11 +57,17 @@ public class DaoInforme {
 	}
 
 	public boolean save(Informe informe) throws SQLException {
-
+		String dateString = null;
+		   SimpleDateFormat sdfr = new SimpleDateFormat("dd/MM/yyyy");
+		   try{
+			dateString = sdfr.format( informe.getFecha_creacion());
+		   }catch (Exception ex ){
+			System.out.println(ex);
+		   }
 		try {
 			String sql = "INSERT INTO INFORME ( ID_INFORME,ID_USUARIO, NOMBRE_INFORME, FECHA_CREACION,UBICACION_ARCHIVO)"
-					+ " VALUES(ARTISTA_ID_SEQUENCE.NEXTVAL," + informe.getId_usuario() + ",'"
-					+ informe.getNombre_informe() + "',to_date('" + informe.getFecha_creacion() + "','dd/mm/yy'),'"
+					+ " VALUES(ARTISTA_ID_SEQUENCE.NEXTVAL,'" + informe.getId_usuario() + "','"
+					+ informe.getNombre_informe() + "',to_date('" + dateString + "','dd/mm/yy'),'"
 					+ informe.getUbicacion_archivo() + "')";
 
 			PreparedStatement ps = conexion.prepareStatement(sql);

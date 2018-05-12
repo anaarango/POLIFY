@@ -109,7 +109,9 @@
 			</div>
 		</div>
 		<br />
+		
 		<div class="row">
+		
 			<h:dataTable value="#{informeBean.operationByArtistList}" var="item"
 				rendered="#{not empty informeBean.operationByArtistList}"
 				styleClass="table table-bordered" headerClass="thead-dark">
@@ -136,6 +138,43 @@
 						<h:outputLabel value="Total"></h:outputLabel>
 					</f:facet>
 					<h:outputLabel value="#{item.total}"></h:outputLabel>
+				</h:column>
+
+			</h:dataTable>
+			
+			
+				<h:dataTable value="#{informeBean.recompensasGanadas}" var="item"
+				rendered="#{not empty informeBean.recompensasGanadas}"
+				styleClass="table table-bordered" headerClass="thead-dark">
+				<h:column>
+					<f:facet name="header">
+						<h:outputLabel value="Id artista"></h:outputLabel>
+					</f:facet>
+					<h:outputLabel value="#{item.id_artista}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<h:outputLabel value="Artista"></h:outputLabel>
+					</f:facet>
+					<h:outputLabel value="#{item.nombre_artista}"></h:outputLabel>
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<h:outputLabel value="Empresa difusora"></h:outputLabel>
+					</f:facet>
+					<h:outputLabel value="#{item.nombre_empresa}"></h:outputLabel>
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<h:outputLabel value="Total"></h:outputLabel>
+					</f:facet>
+					<h:outputLabel value="#{item.total}"></h:outputLabel>
+				</h:column>
+								<h:column>
+					<f:facet name="header">
+						<h:outputLabel value="Recompensa"></h:outputLabel>
+					</f:facet>
+					<h:outputLabel value="#{item.nombre_recompensa}"></h:outputLabel>
 				</h:column>
 
 			</h:dataTable>
@@ -231,6 +270,11 @@
 			</h:dataTable>
 
 			<c:if test="#{not empty informeBean.operationByArtistList}">
+				<p:commandButton onclick="javascript:openModal()"
+					value="Guardar reporte" id="editColorButton" />
+			</c:if>
+			
+			<c:if test="#{not empty informeBean.recompensasGanadas}">
 				<p:commandButton onclick="javascript:openModal()"
 					value="Guardar reporte" id="editColorButton" />
 			</c:if>

@@ -17,10 +17,13 @@ import com.polify.dao.DaoArtista;
 import com.polify.dao.DaoEmpresa_difusora;
 import com.polify.dao.DaoInforme;
 import com.polify.dao.DaoOperaciones;
+import com.polify.dao.DaoRecompensa;
 import com.polify.entity.Artista;
 import com.polify.entity.Empresa_difusora;
 import com.polify.entity.Informe;
 import com.polify.entity.Operaciones;
+import com.polify.entity.Recompensa;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -49,10 +52,46 @@ public class InformeBean {
 	private List<Operaciones> operationByArtistList = new ArrayList<Operaciones>();
 	private List<Operaciones> operationByDiffuserCompanyList = new ArrayList<Operaciones>();
 	private List<Operaciones> operationRankingList = new ArrayList<Operaciones>();
+	private List<Operaciones> recompensasPorArtista = new ArrayList<Operaciones>();
+	private List<Recompensa> recompensaList = new ArrayList<Recompensa>();
+	private List<Operaciones> operacionesForRecompensa = new ArrayList<Operaciones>();
+	private List<Operaciones> recompensasGanadas = new ArrayList<Operaciones>();
 	private String fileName;
 
 	public InformeBean() {
 
+	}
+
+	public List<Operaciones> getOperacionesForRecompensa() {
+		return operacionesForRecompensa;
+	}
+
+	public void setOperacionesForRecompensa(List<Operaciones> operacionesForRecompensa) {
+		this.operacionesForRecompensa = operacionesForRecompensa;
+	}
+
+	public List<Operaciones> getRecompensasGanadas() {
+		return recompensasGanadas;
+	}
+
+	public void setRecompensasGanadas(List<Operaciones> recompensasGanadas) {
+		this.recompensasGanadas = recompensasGanadas;
+	}
+
+	public List<Recompensa> getRecompensaList() {
+		return recompensaList;
+	}
+
+	public void setRecompensaList(List<Recompensa> recompensaList) {
+		this.recompensaList = recompensaList;
+	}
+
+	public List<Operaciones> getRecompensasPorArtista() {
+		return recompensasPorArtista;
+	}
+
+	public void setRecompensasPorArtista(List<Operaciones> recompensasPorArtista) {
+		this.recompensasPorArtista = recompensasPorArtista;
 	}
 
 	public List<Operaciones> getOperationRankingList() {
@@ -116,12 +155,15 @@ public class InformeBean {
 		operationByDiffuserCompanyList = new ArrayList<Operaciones>();
 		operationRankingList = new ArrayList<Operaciones>();
 		informesList = new ArrayList<Informe>();
+		recompensasGanadas = new ArrayList<Operaciones>();
 		try {
 
 			if (Integer.parseInt(informe.getOptionSelected()) == 1) {
 				getSellForArtist();
 			} else if (Integer.parseInt(informe.getOptionSelected()) == 2) {
 				GetSellForDiffuserCompany();
+			} else if (Integer.parseInt(informe.getOptionSelected()) == 3) {
+				GetRecompensaArtist();
 			} else if (Integer.parseInt(informe.getOptionSelected()) == 4) {
 				GetSellRankingArtist();
 			} else if (Integer.parseInt(informe.getOptionSelected()) == 5) {
@@ -207,18 +249,18 @@ public class InformeBean {
 	public void ExportExcel() throws SQLException, NumberFormatException, ParseException {
 		List<Operaciones> operations;
 		DaoInforme daoInforme = new DaoInforme();
-		//Get CurrentDateTimeforFileName append
+		// Get CurrentDateTimeforFileName append
 		Date date = new Date();
 		java.sql.Date currentDate = new java.sql.Date(date.getTime());
 		String dateString = null;
-		   SimpleDateFormat sdfr = new SimpleDateFormat("dd-MMM-yyyy-HH-mm-ss");
-		   try{
-			dateString = sdfr.format( currentDate );
-		   }catch (Exception ex ){
+		SimpleDateFormat sdfr = new SimpleDateFormat("dd-MMM-yyyy-HH-mm-ss");
+		try {
+			dateString = sdfr.format(currentDate);
+		} catch (Exception ex) {
 			System.out.println(ex);
-		   }
-		   
-		   String SaveName = getFileName() + dateString;
+		}
+
+		String SaveName = getFileName() + dateString;
 
 		DaoOperaciones daoOperaciones = new DaoOperaciones();
 
@@ -267,15 +309,15 @@ public class InformeBean {
 			for (Operaciones operacion : operations) {
 				Row row = sheet.createRow(rowNum++);
 				Cell cell = row.createCell(0);
-				cell.setCellValue((Integer)operacion.getId_empresa_difusora());
+				cell.setCellValue((Integer) operacion.getId_empresa_difusora());
 				cell = row.createCell(1);
-				cell.setCellValue((String)operacion.getNombre_empresa());
+				cell.setCellValue((String) operacion.getNombre_empresa());
 				cell = row.createCell(2);
-				cell.setCellValue((String)operacion.getNombre_artista());
+				cell.setCellValue((String) operacion.getNombre_artista());
 				cell = row.createCell(4);
-				cell.setCellValue((Integer)operacion.getNumero_operaciones());
+				cell.setCellValue((Integer) operacion.getNumero_operaciones());
 				cell = row.createCell(3);
-				cell.setCellValue((Integer)operacion.getTotal());
+				cell.setCellValue((Integer) operacion.getTotal());
 			}
 
 			try {
@@ -288,13 +330,42 @@ public class InformeBean {
 				e.printStackTrace();
 			}
 
-			
-			
 			System.out.println("SellDiffuserCompany");
+		}else if (Integer.parseInt(informe.getOptionSelected()) == 3) {
+			HSSFWorkbook workbook = new HSSFWorkbook();
+			HSSFSheet sheet = workbook.createSheet("Reporte recompensas");
+
+			operations = getRecompensasGanadas();
+
+			int rowNum = 1;
+			System.out.println("Creating excel");
+
+			for (Operaciones operacion : operations) {
+				Row row = sheet.createRow(rowNum++);
+				Cell cell = row.createCell(0);
+				cell.setCellValue((String) operacion.getNombre_artista());
+				cell = row.createCell(1);
+				cell.setCellValue((String) operacion.getNombre_empresa());
+				cell = row.createCell(2);
+				cell.setCellValue((Integer) operacion.getTotal());
+				cell = row.createCell(3);
+				cell.setCellValue((String) operacion.getNombre_recompensa());
+			}
+
+			try {
+				FileOutputStream outputStream = new FileOutputStream("C:\\" + SaveName + ".xls");
+				workbook.write(outputStream);
+				workbook.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			System.out.println("RecompensasParaArtistas");
 		} else if (Integer.parseInt(informe.getOptionSelected()) == 4) {
 			// GetSellRankingArtist();
-			
-			
+
 			HSSFWorkbook workbook = new HSSFWorkbook();
 			HSSFSheet sheet = workbook.createSheet("Reporte ranking");
 
@@ -306,22 +377,23 @@ public class InformeBean {
 			for (Operaciones operacion : operations) {
 				Row row = sheet.createRow(rowNum++);
 				Cell cell = row.createCell(0);
-				cell.setCellValue((Integer)operacion.getRankNumber());
+				cell.setCellValue((Integer) operacion.getRankNumber());
 				cell = row.createCell(1);
-				cell.setCellValue((String)operacion.getNombre_artista());
+				cell.setCellValue((String) operacion.getNombre_artista());
 				cell = row.createCell(2);
-				cell.setCellValue((Integer)operacion.getTotal());
-				cell = row.createCell(3);				
-				cell.setCellValue((String)operacion.getNombre_empresa());
+				cell.setCellValue((Integer) operacion.getTotal());
+				cell = row.createCell(3);
+				cell.setCellValue((String) operacion.getNombre_empresa());
 			}
 
 			try {
 				FileOutputStream outputStream = new FileOutputStream("C:\\" + SaveName + ".xls");
+
 				workbook.write(outputStream);
 				workbook.close();
 				System.out.println("File Created");
 				System.out.println("Save Inform");
-				informe = new Informe(0, 1, getFileName(), currentDate , SaveName);
+				informe = new Informe(0, 1, getFileName(), currentDate, SaveName);
 				daoInforme.save(informe);
 				System.out.println("Infom Saved");
 			} catch (FileNotFoundException e) {
@@ -330,13 +402,44 @@ public class InformeBean {
 				e.printStackTrace();
 			}
 
-			
 			System.out.println("RankingArtist");
 		} else {
 			// getSellForArtist();
 			System.out.println("SellForArtist");
 		}
-		
+
+	}
+
+	public void GetRecompensaArtist() {
+		DaoRecompensa daoRecompensa = new DaoRecompensa();
+		DaoOperaciones daoOperations = new DaoOperaciones();
+		List<Operaciones> resultado = new ArrayList<Operaciones>();
+		recompensaList = daoRecompensa.getAllRecompensas();
+		setRecompensaList(recompensaList);
+		setRecompensaList(daoRecompensa.getAllRecompensas());
+		operacionesForRecompensa = daoOperations.getAllOperacionesByArtist(
+				(informe.getStartDate() != null ? informe.getStartDate() : null),
+				(informe.getToDate() != null ? informe.getToDate() : null), null);
+
+		for (Operaciones operacion : operacionesForRecompensa) {
+			for (Recompensa recompensa : recompensaList) {
+				if (operacion.getTotal() >= recompensa.getValor_recompensa()) {
+					operacion.setNombre_recompensa(recompensa.getNombre_recompensa());
+					resultado.add(operacion);
+					break;
+				}
+
+			}
+		}
+
+		recompensasGanadas = resultado;
+
+		for (Operaciones reco : getRecompensasGanadas()) {
+			System.out.println(reco.getId_artista());
+			System.out.println(reco.getTotal());
+
+		}
+
 	}
 
 }

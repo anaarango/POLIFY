@@ -18,6 +18,7 @@ public class Operaciones {
 		private String nombre_artista;
 		private String nombre_empresa;
 		private int rankNumber;
+		private String nombre_recompensa;
 	
 	public int getId_operaciones() {
 		return id_operaciones;
@@ -134,6 +135,16 @@ public class Operaciones {
 	public void setRankNumber(int rankNumber) {
 		this.rankNumber = rankNumber;
 	}
+	
+	
+
+	public String getNombre_recompensa() {
+		return nombre_recompensa;
+	}
+
+	public void setNombre_recompensa(String nombre_recompensa) {
+		this.nombre_recompensa = nombre_recompensa;
+	}
 
 	public Operaciones(int id_artista, String nombre_artista,
 			String nombre_empresa, int total) {
@@ -161,6 +172,17 @@ public class Operaciones {
 		this.nombre_empresa = nombre_empresa;
 		this.total = total;
 		this.rankNumber = rankingNumber;
+		this.canEdit = true;
+	}
+	
+	public Operaciones(int id_artista, String nombre_artista,
+			String nombre_empresa, int total, String nombre_recompensa) {
+		super();
+		this.id_artista = id_artista;
+		this.nombre_artista = nombre_artista;
+		this.nombre_empresa = nombre_empresa;
+		this.total = total;
+		this.nombre_recompensa = nombre_recompensa;
 		this.canEdit = true;
 	}
 
