@@ -16,8 +16,6 @@ import com.polify.entity.Empresa_difusora;
 public class DaoArtista {
 
 	private Connection conexion;
-	
-	
 
 	public DaoArtista() {
 		super();
@@ -31,7 +29,7 @@ public class DaoArtista {
 		Statement stmt = null;
 
 		try {
-			
+
 			stmt = conexion.createStatement();
 			String sql = "SELECT * " + " FROM ARTISTA ORDER BY ID_ARTISTA ASC ";
 			rs = stmt.executeQuery(sql);
@@ -58,7 +56,6 @@ public class DaoArtista {
 				if (rs != null) {
 					rs.close();
 				}
-				
 
 			} catch (SQLException e2) {
 				e2.printStackTrace();
@@ -74,7 +71,6 @@ public class DaoArtista {
 		Statement stmt = null;
 
 		try {
-			
 
 			stmt = conexion.createStatement();
 			String sql = "SELECT art.id_artista, art.nombre_artista, "
@@ -124,7 +120,7 @@ public class DaoArtista {
 		String sql = "DELETE FROM ARTISTA WHERE ID_ARTISTA='" + id_artista + "'";
 		PreparedStatement ps = null;
 		try {
-			
+
 			ps = conexion.prepareStatement(sql);
 			ps.executeUpdate();
 			return true;
@@ -149,7 +145,7 @@ public class DaoArtista {
 
 		PreparedStatement ps = null;
 		try {
-			
+
 			String sql = "INSERT INTO ARTISTA ( ID_ARTISTA ,NOMBRE_ARTISTA, ID_EMPRESA_DIFUSORA, EMAIL)"
 					+ " VALUES(ARTISTA_ID_SEQUENCE.NEXTVAL,'" + artista.getNombre_artista() + "','"
 					+ artista.getId_empresa_difusora() + "','" + artista.getEmail() + "')";
@@ -183,7 +179,7 @@ public class DaoArtista {
 
 		PreparedStatement ps = null;
 		try {
-			
+
 			ps = conexion.prepareStatement(sql);
 			ps.executeUpdate();
 			return true;
@@ -202,4 +198,53 @@ public class DaoArtista {
 		}
 		return false;
 	}
+
+	public boolean consultarArtistaEmail(Artista artista) {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<Artista> artistaList = new LinkedList<>();
+
+		try {
+
+			String sql = "SELECT * FROM ARTISTA WHERE EMAIL = ? ";
+
+			ps = conexion.prepareStatement(sql);
+			ps.setString(1, artista.getEmail());
+
+			// execute insert SQL stetement
+
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				int id_artista = rs.getInt("ID_ARTISTA");
+				String nombre = rs.getString("NOMBRE_ARTISTA");
+				int id_empresa = rs.getInt("ID_EMPRESA_DIFUSORA");
+				String emailArtista = rs.getString("email");
+				;
+
+				Artista artistaResult = new Artista(id_artista, nombre, id_empresa, emailArtista);
+
+				artistaList.add(artistaResult);
+			}
+
+			if (artistaList.isEmpty()) {
+				return false;
+			}
+
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			try {
+				if (ps != null) {
+					ps.close();
+				}
+
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+		return false;
+	}
+
 }

@@ -13,8 +13,10 @@ import javax.faces.context.FacesContext;
 
 import org.primefaces.event.RowEditEvent;
 
+import com.polify.dao.DaoEmpresa_difusora;
 import com.polify.dao.DaoOperaciones;
 import com.polify.dto.OperacionesArtistaEmpresaDTO;
+import com.polify.entity.Empresa_difusora;
 import com.polify.entity.Operaciones;
 
 @ManagedBean
@@ -22,6 +24,8 @@ import com.polify.entity.Operaciones;
 public class OperacionesBean {
 
 	Operaciones operaciones = new Operaciones();
+	List<Empresa_difusora> empresas = new ArrayList<>();
+	Empresa_difusora empresa = new Empresa_difusora();
 	List<OperacionesArtistaEmpresaDTO> operacionesList = new ArrayList<OperacionesArtistaEmpresaDTO>();
 
 	@ManagedProperty("#{operacionesArtistaEmpresa}")
@@ -32,6 +36,9 @@ public class OperacionesBean {
 		operacionesController = new ArtistaOperacionesController();
 		operaciones = new Operaciones();
 		operacionesList = operacionesController.consultarArtistasEmpresas();
+		List<Empresa_difusora> empresas = new ArrayList<>();
+		Empresa_difusora empresa = new Empresa_difusora();
+		
 
 	}
 
@@ -42,6 +49,11 @@ public class OperacionesBean {
 			DaoOperaciones daoOperaciones = new DaoOperaciones();
 
 			operaciones.setId_usuario(12);
+
+			DaoEmpresa_difusora empresaDao = new DaoEmpresa_difusora();
+
+			operaciones.setId_empresa_difusora(
+					empresaDao.getEmpresaByArtistaID(operaciones.getId_artista()).get(0).getId_empresa_difusora());
 
 			if (daoOperaciones.save(operaciones)) {
 				operacionesList = operacionesController.consultarArtistasEmpresas();
@@ -62,15 +74,54 @@ public class OperacionesBean {
 
 	private boolean validarCampos() {
 
-		Date startDate = (Date) operaciones.getFecha_inicial();
-		Date endDate = (Date) operaciones.getFecha_final();
-		if (endDate.before(startDate)) {
+		if (operaciones != null) {
 
+			if (operaciones.getFecha_inicial() != null && operaciones.getFecha_final() != null) {
+
+				Date startDate = (Date) operaciones.getFecha_inicial();
+				Date endDate = (Date) operaciones.getFecha_final();
+				if (endDate.before(startDate)) {
+
+					FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"La fecha de inicio ingresada debe ser menor a la fecha fin ", " Error en las fechas");
+					FacesContext.getCurrentInstance().addMessage("operacionesForm", msg);
+					return false;
+
+				}
+
+			} else {
+				FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Debe tener fecha inicio y fecha fin ingresadas: ", " Error en las fechas");
+				FacesContext.getCurrentInstance().addMessage("operacionesForm", msg);
+
+				return false;
+			}
+
+			if (operaciones.getNumero_operaciones() == 0) {
+				FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Valor numero operacion invalido",
+						"El valor de numero de operacion debe ser diferente de cero");
+				FacesContext.getCurrentInstance().addMessage("operacionesForm", msg);
+				return false;
+			} else {
+
+				String valorIngresado = String.valueOf(operaciones.getNumero_operaciones());
+
+				try {
+					Integer.parseInt(valorIngresado);
+				} catch (NumberFormatException nfe) {
+					FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Valor numero operacion invalido",
+							"El valor de el numero de operacion debe ser numerico" + " no es valor valido");
+					FacesContext.getCurrentInstance().addMessage("operacionesForm", msg);
+					return false;
+				}
+
+			}
+
+		} else {
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"La fecha de inicio ingresada debe ser menor a: " + endDate, " Error en las fechas");
-			FacesContext.getCurrentInstance().addMessage("empresaForm", msg);
+					"no ha ingresado ningún dato de operaciones: ", " Error en operaciones");
+			FacesContext.getCurrentInstance().addMessage("operacionesForm", msg);
 			return false;
-
 		}
 
 		return true;
@@ -105,12 +156,12 @@ public class OperacionesBean {
 		if (daoOperaciones.delete(operaciones.getId_operaciones())) {
 			FacesMessage msg = new FacesMessage("Operación Eliminada exitosamente",
 					"La operacióncon ID: " + operaciones.getId_operaciones() + " ha sido eliminada de forma exitosa");
-			FacesContext.getCurrentInstance().addMessage("empresaForm", msg);
+			FacesContext.getCurrentInstance().addMessage("operacionesForm", msg);
 		} else {
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al eliminar la empresa",
 					"La opeacion con ID: " + operaciones.getId_operaciones()
 							+ " No ha sido elminada de forma exitosa, Existen registros enlazados esta operación");
-			FacesContext.getCurrentInstance().addMessage("empresaForm", msg);
+			FacesContext.getCurrentInstance().addMessage("operacionesForm", msg);
 		}
 
 		this.operacionesList = this.operacionesController.consultarArtistasEmpresas();
@@ -130,14 +181,14 @@ public class OperacionesBean {
 
 		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Operacion Editada exitosamente",
 				"La operación con ID: " + +oper.getId_operaciones() + " ha sido actualizado de forma exitosa");
-		FacesContext.getCurrentInstance().addMessage("empresaForm", msg);
+		FacesContext.getCurrentInstance().addMessage("operacionesForm", msg);
 	}
 
 	public void onRowCancel(RowEditEvent event) {
 
 		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "La edición ha sido cancelada",
 				((OperacionesArtistaEmpresaDTO) event.getObject()).getEmpresa().getId_empresa_difusora().toString());
-		FacesContext.getCurrentInstance().addMessage("empresaForm", msg);
+		FacesContext.getCurrentInstance().addMessage("operacionesForm", msg);
 	}
 
 	public ArtistaOperacionesController getOperacionesController() {
@@ -146,6 +197,30 @@ public class OperacionesBean {
 
 	public void setOperacionesController(ArtistaOperacionesController operacionesController) {
 		this.operacionesController = operacionesController;
+	}
+
+	public void changeArtistaNombre() {
+		DaoEmpresa_difusora daoEmp = new DaoEmpresa_difusora();
+		int artistaId = operaciones.getId_artista();
+		empresas = daoEmp.getEmpresaByArtistaID(artistaId);
+		empresa = empresas.get(0);
+
+	}
+
+	public List<Empresa_difusora> getEmpresas() {
+		return empresas;
+	}
+
+	public void setEmpresas(List<Empresa_difusora> empresas) {
+		this.empresas = empresas;
+	}
+
+	public Empresa_difusora getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(Empresa_difusora empresa) {
+		this.empresa = empresa;
 	}
 
 }

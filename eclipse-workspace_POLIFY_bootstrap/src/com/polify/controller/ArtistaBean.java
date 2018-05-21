@@ -2,6 +2,8 @@ package com.polify.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -40,17 +42,28 @@ public class ArtistaBean {
 	public void createArtistaForm() {
 		DaoArtista daoArtista = new DaoArtista();
 
-		daoArtista.save(artista);
-		artistasEmpresa = artistaController.consultarArtistasEmpresas();
+		if (validarCampos()) {
 
-		String idArtistaCreado = Integer
-				.toString(artistasEmpresa.get(artistasEmpresa.size() - 1).getArtista().getId_artista());
+			if (!daoArtista.consultarArtistaEmail(artista)) {
 
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		FacesMessage facesMessage = new FacesMessage("Creacion de Artista",
-				"La creación del artista ha sido exitosa y con ID:" + idArtistaCreado);
-		facesContext.addMessage("artistaForm", facesMessage);
+				daoArtista.save(artista);
+				artistasEmpresa = artistaController.consultarArtistasEmpresas();
 
+				String idArtistaCreado = Integer
+						.toString(artistasEmpresa.get(artistasEmpresa.size() - 1).getArtista().getId_artista());
+
+				FacesContext facesContext = FacesContext.getCurrentInstance();
+				FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Creacion de Artista",
+						"La creación del artista ha sido exitosa y con ID:" + idArtistaCreado);
+				facesContext.addMessage("artistaForm", facesMessage);
+			} else {
+				FacesContext facesContext = FacesContext.getCurrentInstance();
+				FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Creacion de Artista",
+						"El artista que esta intentando ingresar ya existe asociado al email:" + artista.getEmail());
+				facesContext.addMessage("artistaForm", facesMessage);
+			}
+
+		}
 	}
 
 	public List<ArtistaEmpresaDTO> getArtistasEmpresa() {
@@ -110,6 +123,44 @@ public class ArtistaBean {
 				"La eleminación del artista ha sido exitosa");
 		facesContext.addMessage("artistaForm", facesMessage);
 
+	}
+
+	private boolean validarCampos() {
+
+		if (artista.getNombre_artista() != null && artista.getNombre_artista().equals("")) {
+
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"El campo nombre artista no puede ser vacio ", " Error en el campo NOMBRE ARTISTA");
+			FacesContext.getCurrentInstance().addMessage("artistaForm", msg);
+			return false;
+
+		}
+
+		if (artista.getEmail() != null) {
+
+			if (artista.getEmail().equals("")) {
+				FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"El campo email artista no puede ser vacio ", " Error en el campo EMAIL ARTISTA");
+				FacesContext.getCurrentInstance().addMessage("artistaForm", msg);
+				return false;
+			} else {
+				String emailIngresado = artista.getEmail();
+
+				Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
+						Pattern.CASE_INSENSITIVE);
+
+				Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailIngresado);
+				if (!matcher.find()) {
+					FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Email invalido",
+							"El email: " + emailIngresado + " no es un email valido");
+					FacesContext.getCurrentInstance().addMessage("artistaForm", msg);
+					return false;
+				}
+			}
+
+		}
+
+		return true;
 	}
 
 }

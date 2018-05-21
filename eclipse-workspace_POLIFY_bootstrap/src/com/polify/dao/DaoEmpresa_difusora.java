@@ -9,13 +9,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.polify.controller.utility.DBUtil;
+import com.polify.entity.Artista;
 import com.polify.entity.Empresa_difusora;
 
 public class DaoEmpresa_difusora {
 
 	private Connection conexion;
-	
-	
 
 	public DaoEmpresa_difusora() {
 		super();
@@ -29,13 +28,13 @@ public class DaoEmpresa_difusora {
 		Statement stmt = null;
 
 		try {
-			
+
 			stmt = conexion.createStatement();
 			String sql = "SELECT * " + " FROM EMPRESA_DIFUSORA ORDER BY ID_EMPRESA_DIFUSORA ASC ";
 			rs = stmt.executeQuery(sql);
 
 			while (rs.next()) {
-				
+
 				int id_empresa = rs.getInt("ID_EMPRESA_DIFUSORA");
 				String nombre = rs.getString("NOMBRE_EMPRESA");
 				String email = rs.getString("EMAIL");
@@ -55,7 +54,6 @@ public class DaoEmpresa_difusora {
 				if (rs != null) {
 					rs.close();
 				}
-				
 
 			} catch (SQLException e2) {
 				e2.printStackTrace();
@@ -69,7 +67,7 @@ public class DaoEmpresa_difusora {
 		String sql = "DELETE FROM EMPRESA_DIFUSORA WHERE ID_EMPRESA_DIFUSORA='" + id_empresa_difusora + "'";
 		PreparedStatement ps = null;
 		try {
-			
+
 			ps = conexion.prepareStatement(sql);
 			ps.executeUpdate();
 			return true;
@@ -82,8 +80,6 @@ public class DaoEmpresa_difusora {
 					ps.close();
 				}
 
-				
-
 			} catch (SQLException e2) {
 				e2.printStackTrace();
 			}
@@ -95,7 +91,6 @@ public class DaoEmpresa_difusora {
 		PreparedStatement ps = null;
 
 		try {
-			
 
 			String sql = "INSERT INTO EMPRESA_DIFUSORA ( ID_EMPRESA_DIFUSORA, NOMBRE_EMPRESA, EMAIL, VALOR_X_OPERACION)"
 					+ " VALUES(ID_EMPRESA_DIFUSORA_SEQUENCE.NEXTVAL,'" + empresa.getNombre_empresa() + "','"
@@ -116,8 +111,6 @@ public class DaoEmpresa_difusora {
 					ps.close();
 				}
 
-				
-
 			} catch (SQLException e2) {
 				e2.printStackTrace();
 			}
@@ -133,7 +126,7 @@ public class DaoEmpresa_difusora {
 
 		PreparedStatement ps = null;
 		try {
-			
+
 			ps = conexion.prepareStatement(sql);
 			ps.executeUpdate();
 			return true;
@@ -146,13 +139,59 @@ public class DaoEmpresa_difusora {
 					ps.close();
 				}
 
-				
-
 			} catch (SQLException e2) {
 				e2.printStackTrace();
 			}
 		}
 		return false;
+	}
+
+	public List<Empresa_difusora> getEmpresaByArtistaID(int artistaId) {
+
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<Empresa_difusora> empresaList = new LinkedList<>();
+
+		try {
+
+			String sql = "select * from empresa_difusora emp, "
+					+ "artista art where emp.id_empresa_difusora = art.id_empresa_difusora "
+					+ "and id_artista = ?";
+
+			ps = conexion.prepareStatement(sql);
+			ps.setInt(1, artistaId);
+
+			// execute insert SQL stetement
+
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				int id_empresa = rs.getInt(1);
+				String nombre_empresa = rs.getString(2);
+				String email_empresa = rs.getString(3);
+				int valor_operacion = rs.getInt(4);
+				
+				
+
+				Empresa_difusora empresa = new Empresa_difusora(id_empresa, nombre_empresa, email_empresa, valor_operacion);
+
+				empresaList.add(empresa);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			try {
+				if (ps != null) {
+					ps.close();
+				}
+
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+
+		return empresaList;
 	}
 
 }
