@@ -37,9 +37,9 @@
 								styleClass="control-label col-sm-2" />
 							<p:calendar id="startDate"
 								value="#{operacionesBean.operaciones.fecha_inicial}"
-								showOn="button" > 
+								showOn="button">
 								<p:ajax event="dateSelect" update="startDate" />
-								</p:calendar>
+							</p:calendar>
 							<div class="col-sm-10"></div>
 						</div>
 						<div class="form-group">
@@ -47,7 +47,7 @@
 								styleClass="control-label col-sm-2" />
 							<p:calendar id="endDate"
 								value="#{operacionesBean.operaciones.fecha_final}"
-								showOn="button" required="true">
+								showOn="button">
 								<f:attribute name="startDate"
 									value="#{operacionesBean.operaciones.fecha_inicial}" />
 								<f:validator validatorId="validadorFechas"></f:validator>
@@ -60,29 +60,24 @@
 							<div class="col-sm-10">
 								<h:selectOneMenu
 									value="#{operacionesBean.operaciones.id_artista}"
-									style="width:100%" required="true">
+									style="width:100%">
 									<f:selectItems
 										value="#{operacionesBean.operacionesController.artistas}"
 										var="man" itemLabel="#{man.nombre_artista}"
 										itemValue="#{man.id_artista}" />
+									<f:ajax listener="#{operacionesBean.changeArtistaNombre}" render="empresas" />
 								</h:selectOneMenu>
 							</div>
 						</div>
-
-						<div class="form-group">
-							<h:outputLabel value="Nombre Empresa"
-								styleClass="control-label col-sm-2" />
-							<div class="col-sm-10">
-								<h:selectOneMenu
-									value="#{operacionesBean.operaciones.id_empresa_difusora}"
-									style="width:100%" required="true">
-									<f:selectItems
-										value="#{operacionesBean.operacionesController.empresa}"
-										var="emp" itemLabel="#{emp.nombre_empresa}"
-										itemValue="#{emp.id_empresa_difusora}" />
-								</h:selectOneMenu>
+						<h:panelGroup id="empresas" rendered="#{not empty operacionesBean.empresa}">
+							<div class="form-group">
+								<h:outputLabel value="Nombre Empresa"
+									styleClass="control-label col-sm-2" />
+								<div class="col-sm-10">
+									<h:outputText value="#{operacionesBean.empresa.nombre_empresa}"></h:outputText>
+								</div>
 							</div>
-						</div>
+						</h:panelGroup>
 
 
 						<div class="form-group">
@@ -103,7 +98,8 @@
 							<div class="col-sm-offset-2 col-sm-10">
 								<h:commandButton value="Crear"
 									action="#{operacionesBean.crearOperacionesForm}"
-									styleClass="btn btn-default" update="panel" icon="ui-icon-check"/>
+									styleClass="btn btn-default" update="panel"
+									icon="ui-icon-check" />
 							</div>
 						</div>
 					</p:panel>
@@ -124,7 +120,7 @@
 								update=":operacionesForm:msgs" />
 
 
-							<p:column headerText="Id" style="width:32px">
+							<p:column headerText="Id" style="width:60px">
 
 								<h:outputText value="#{oper.operaciones.id_operaciones}" />
 

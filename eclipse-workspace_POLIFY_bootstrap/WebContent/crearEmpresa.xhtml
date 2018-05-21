@@ -71,14 +71,14 @@
 						<p:dataTable id="tbl" var="emp"
 							value="#{empresaDifusoraBean.empresaList}" editable="true"
 							styleClass="table table-bordered table-striped tableOutput">
-							<f:facet name="header">Empresas de difusión</f:facet>
+							<f:facet name="header">Empresa Difusión</f:facet>
 							<p:ajax event="rowEdit" listener="#{empresaDifusoraBean.onRowEdit}"
 								update=":empresaForm:msgs" />
 							<p:ajax event="rowEditCancel"
 								listener="#{empresaDifusoraBean.onRowCancel}" update=":empresaForm:msgs" />
 
 
-							<p:column headerText="Id" style="width:32px">
+							<p:column headerText="Id" style="width:60px">
 
 								<h:outputText value="#{emp.id_empresa_difusora}" />
 
@@ -91,7 +91,7 @@
 									</f:facet>
 									<f:facet name="input">
 										<p:inputText id="modelInputEmpresa"
-											value="#{emp.nombre_empresa}" style="width:100%" />
+											value="#{empresaDifusoraBean.empresa.nombre_empresa}" style="width:100%" />
 									</f:facet>
 								</p:cellEditor>
 
@@ -103,7 +103,7 @@
 										<h:outputText value="#{emp.email}" />
 									</f:facet>
 									<f:facet name="input">
-										<p:inputText id="modelInput" value="#{emp.email}"
+										<p:inputText id="modelInput" value="#{empresaDifusoraBean.empresa.email}"
 											style="width:100%" />
 									</f:facet>
 								</p:cellEditor>
@@ -116,7 +116,7 @@
 										<h:outputText value="#{emp.valor_x_operacion}" />
 									</f:facet>
 									<f:facet name="input">
-										<p:inputText id="modelInput2" value="#{emp.valor_x_operacion}"
+										<p:inputText id="modelInput2" value="#{empresaDifusoraBean.empresa.valor_x_operacion}"
 											style="width:100%" />
 									</f:facet>
 								</p:cellEditor>
