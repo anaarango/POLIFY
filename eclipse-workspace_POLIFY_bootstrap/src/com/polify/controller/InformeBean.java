@@ -8,10 +8,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.management.RuntimeErrorException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.polify.dao.DaoArtista;
 import com.polify.dao.DaoEmpresa_difusora;
@@ -23,11 +28,17 @@ import com.polify.entity.Empresa_difusora;
 import com.polify.entity.Informe;
 import com.polify.entity.Operaciones;
 import com.polify.entity.Recompensa;
+import com.polify.entity.SessionUtils;
+
+import okhttp3.Request;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -57,10 +68,24 @@ public class InformeBean {
 	private List<Operaciones> operacionesForRecompensa = new ArrayList<Operaciones>();
 	private List<Operaciones> recompensasGanadas = new ArrayList<Operaciones>();
 	private String fileName;
-
+	private String message;
+	private String filePath = "C:\\";
 	public InformeBean() {
+}
 
+	
+	
+	public String getMessage() {
+		return message;
 	}
+
+
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+
 
 	public List<Operaciones> getOperacionesForRecompensa() {
 		return operacionesForRecompensa;
@@ -147,6 +172,7 @@ public class InformeBean {
 	}
 
 	public void getSellArtists() throws NumberFormatException, ParseException {
+		System.out.println(SessionUtils.getUserName());
 		System.out.println(informe.getStartDate());
 		System.out.println(informe.getToDate());
 		System.out.println(informe.getOptionSelected());
@@ -263,149 +289,176 @@ public class InformeBean {
 		String SaveName = getFileName() + dateString;
 
 		DaoOperaciones daoOperaciones = new DaoOperaciones();
+	
+		try {
+			if (getFileName() != null && getFileName() != "") {
+				if (Integer.parseInt(informe.getOptionSelected()) == 1) {
+					HSSFWorkbook workbook = new HSSFWorkbook();
+					HSSFSheet sheet = workbook.createSheet("Reporte artista");
 
-		if (Integer.parseInt(informe.getOptionSelected()) == 1) {
-			HSSFWorkbook workbook = new HSSFWorkbook();
-			HSSFSheet sheet = workbook.createSheet("Reporte artista");
+					operations = getOperationByArtistList();
 
-			operations = getOperationByArtistList();
+					int rowNum = 1;
+					System.out.println("Creating excel");
 
-			int rowNum = 1;
-			System.out.println("Creating excel");
+					for (Operaciones operacion : operations) {
+						Row row = sheet.createRow(rowNum++);
+						Cell cell = row.createCell(0);
+						cell.setCellValue(operacion.getId_artista());
+						cell = row.createCell(1);
+						cell.setCellValue(operacion.getNombre_artista());
+						cell = row.createCell(2);
+						cell.setCellValue(operacion.getNombre_empresa());
+						cell = row.createCell(3);
+						cell.setCellValue(operacion.getTotal());
+					}
 
-			for (Operaciones operacion : operations) {
-				Row row = sheet.createRow(rowNum++);
-				Cell cell = row.createCell(0);
-				cell.setCellValue(operacion.getId_artista());
-				cell = row.createCell(1);
-				cell.setCellValue(operacion.getNombre_artista());
-				cell = row.createCell(2);
-				cell.setCellValue(operacion.getNombre_empresa());
-				cell = row.createCell(3);
-				cell.setCellValue(operacion.getTotal());
+					try {
+						FileOutputStream outputStream = new FileOutputStream(filePath + SaveName + ".xls");
+						workbook.write(outputStream);
+						workbook.close();
+						System.out.println("File Created");
+						System.out.println("Save Inform");
+						informe = new Informe(0, SessionUtils.getUserId() , getFileName(), currentDate, SaveName);
+						daoInforme.save(informe);
+						System.out.println("Infom Saved");
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+
+					System.out.println("Done");
+
+				} else if (Integer.parseInt(informe.getOptionSelected()) == 2) {
+					HSSFWorkbook workbook = new HSSFWorkbook();
+					HSSFSheet sheet = workbook.createSheet("Reporte empresa difusora");
+
+					operations = getOperationByDiffuserCompanyList();
+
+					int rowNum = 1;
+					System.out.println("Creating excel");
+
+					for (Operaciones operacion : operations) {
+						Row row = sheet.createRow(rowNum++);
+						Cell cell = row.createCell(0);
+						cell.setCellValue((Integer) operacion.getId_empresa_difusora());
+						cell = row.createCell(1);
+						cell.setCellValue((String) operacion.getNombre_empresa());
+						cell = row.createCell(2);
+						cell.setCellValue((String) operacion.getNombre_artista());
+						cell = row.createCell(4);
+						cell.setCellValue((Integer) operacion.getNumero_operaciones());
+						cell = row.createCell(3);
+						cell.setCellValue((Integer) operacion.getTotal());
+					}
+
+					try {
+						FileOutputStream outputStream = new FileOutputStream(filePath + SaveName + ".xls");
+						workbook.write(outputStream);
+						workbook.close();
+						System.out.println("File Created");
+						System.out.println("Save Inform");
+						informe = new Informe(0, SessionUtils.getUserId(), getFileName(), currentDate, SaveName);
+						daoInforme.save(informe);
+						System.out.println("Infom Saved");
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+
+					System.out.println("SellDiffuserCompany");
+				} else if (Integer.parseInt(informe.getOptionSelected()) == 3) {
+					HSSFWorkbook workbook = new HSSFWorkbook();
+					HSSFSheet sheet = workbook.createSheet("Reporte recompensas");
+
+					operations = getRecompensasGanadas();
+
+					int rowNum = 1;
+					System.out.println("Creating excel");
+
+					for (Operaciones operacion : operations) {
+						Row row = sheet.createRow(rowNum++);
+						Cell cell = row.createCell(0);
+						cell.setCellValue((String) operacion.getNombre_artista());
+						cell = row.createCell(1);
+						cell.setCellValue((String) operacion.getNombre_empresa());
+						cell = row.createCell(2);
+						cell.setCellValue((Integer) operacion.getTotal());
+						cell = row.createCell(3);
+						cell.setCellValue((String) operacion.getNombre_recompensa());
+					}
+
+					try {
+						FileOutputStream outputStream = new FileOutputStream(filePath + SaveName + ".xls");
+						workbook.write(outputStream);
+						workbook.close();
+						System.out.println("File Created");
+						System.out.println("Save Inform");
+						informe = new Informe(0, SessionUtils.getUserId() , getFileName(), currentDate, SaveName);
+						daoInforme.save(informe);
+						System.out.println("Infom Saved");
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+
+					System.out.println("RecompensasParaArtistas");
+				} else if (Integer.parseInt(informe.getOptionSelected()) == 4) {
+					// GetSellRankingArtist();
+
+					HSSFWorkbook workbook = new HSSFWorkbook();
+					HSSFSheet sheet = workbook.createSheet("Reporte ranking");
+
+					operations = getOperationRankingList();
+
+					int rowNum = 1;
+					System.out.println("Creating excel");
+
+					for (Operaciones operacion : operations) {
+						Row row = sheet.createRow(rowNum++);
+						Cell cell = row.createCell(0);
+						cell.setCellValue((Integer) operacion.getRankNumber());
+						cell = row.createCell(1);
+						cell.setCellValue((String) operacion.getNombre_artista());
+						cell = row.createCell(2);
+						cell.setCellValue((Integer) operacion.getTotal());
+						cell = row.createCell(3);
+						cell.setCellValue((String) operacion.getNombre_empresa());
+					}
+
+					try {
+						FileOutputStream outputStream = new FileOutputStream(filePath + SaveName + ".xls");
+
+						workbook.write(outputStream);
+						workbook.close();
+						System.out.println("File Created");
+						System.out.println("Save Inform");
+						informe = new Informe(0, SessionUtils.getUserId() , getFileName(), currentDate, SaveName);
+						daoInforme.save(informe);
+						System.out.println("Infom Saved");
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+
+					System.out.println("RankingArtist");
+				} else {
+					// getSellForArtist();
+					System.out.println("SellForArtist");
+				}
+			}else {
+				FacesContext.getCurrentInstance().addMessage("Test-Error", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error-Summary", "Error-Detail"));
+				setMessage("Error ");
 			}
-
-			try {
-				FileOutputStream outputStream = new FileOutputStream("C:\\" + SaveName + ".xls");
-				workbook.write(outputStream);
-				workbook.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			System.out.println("Done");
-
-		} else if (Integer.parseInt(informe.getOptionSelected()) == 2) {
-			HSSFWorkbook workbook = new HSSFWorkbook();
-			HSSFSheet sheet = workbook.createSheet("Reporte empresa difusora");
-
-			operations = getOperationByDiffuserCompanyList();
-
-			int rowNum = 1;
-			System.out.println("Creating excel");
-
-			for (Operaciones operacion : operations) {
-				Row row = sheet.createRow(rowNum++);
-				Cell cell = row.createCell(0);
-				cell.setCellValue((Integer) operacion.getId_empresa_difusora());
-				cell = row.createCell(1);
-				cell.setCellValue((String) operacion.getNombre_empresa());
-				cell = row.createCell(2);
-				cell.setCellValue((String) operacion.getNombre_artista());
-				cell = row.createCell(4);
-				cell.setCellValue((Integer) operacion.getNumero_operaciones());
-				cell = row.createCell(3);
-				cell.setCellValue((Integer) operacion.getTotal());
-			}
-
-			try {
-				FileOutputStream outputStream = new FileOutputStream("C:\\" + SaveName + ".xls");
-				workbook.write(outputStream);
-				workbook.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			System.out.println("SellDiffuserCompany");
-		}else if (Integer.parseInt(informe.getOptionSelected()) == 3) {
-			HSSFWorkbook workbook = new HSSFWorkbook();
-			HSSFSheet sheet = workbook.createSheet("Reporte recompensas");
-
-			operations = getRecompensasGanadas();
-
-			int rowNum = 1;
-			System.out.println("Creating excel");
-
-			for (Operaciones operacion : operations) {
-				Row row = sheet.createRow(rowNum++);
-				Cell cell = row.createCell(0);
-				cell.setCellValue((String) operacion.getNombre_artista());
-				cell = row.createCell(1);
-				cell.setCellValue((String) operacion.getNombre_empresa());
-				cell = row.createCell(2);
-				cell.setCellValue((Integer) operacion.getTotal());
-				cell = row.createCell(3);
-				cell.setCellValue((String) operacion.getNombre_recompensa());
-			}
-
-			try {
-				FileOutputStream outputStream = new FileOutputStream("C:\\" + SaveName + ".xls");
-				workbook.write(outputStream);
-				workbook.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			System.out.println("RecompensasParaArtistas");
-		} else if (Integer.parseInt(informe.getOptionSelected()) == 4) {
-			// GetSellRankingArtist();
-
-			HSSFWorkbook workbook = new HSSFWorkbook();
-			HSSFSheet sheet = workbook.createSheet("Reporte ranking");
-
-			operations = getOperationRankingList();
-
-			int rowNum = 1;
-			System.out.println("Creating excel");
-
-			for (Operaciones operacion : operations) {
-				Row row = sheet.createRow(rowNum++);
-				Cell cell = row.createCell(0);
-				cell.setCellValue((Integer) operacion.getRankNumber());
-				cell = row.createCell(1);
-				cell.setCellValue((String) operacion.getNombre_artista());
-				cell = row.createCell(2);
-				cell.setCellValue((Integer) operacion.getTotal());
-				cell = row.createCell(3);
-				cell.setCellValue((String) operacion.getNombre_empresa());
-			}
-
-			try {
-				FileOutputStream outputStream = new FileOutputStream("C:\\" + SaveName + ".xls");
-
-				workbook.write(outputStream);
-				workbook.close();
-				System.out.println("File Created");
-				System.out.println("Save Inform");
-				informe = new Informe(0, 1, getFileName(), currentDate, SaveName);
-				daoInforme.save(informe);
-				System.out.println("Infom Saved");
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			System.out.println("RankingArtist");
-		} else {
-			// getSellForArtist();
-			System.out.println("SellForArtist");
+			setFileName("");
+			setMessage("Finalizado ");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
@@ -441,5 +494,37 @@ public class InformeBean {
 		}
 
 	}
+	
+	
+	public void dowloadExcel(String ubicacion_archivo,String nombre_informe) {
+		System.out.println("DownloadExcel");
+		System.out.println(ubicacion_archivo);
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+        
+        response.reset();
+        response.setHeader("Content-Disposition","attachment;filename="+nombre_informe+".xls");
 
+        try {
+    		System.out.println("Try");
+            File file = new File(filePath+ubicacion_archivo+".xls");
+            FileInputStream fileIn = new FileInputStream(file);
+            ServletOutputStream out = response.getOutputStream();
+
+            byte[] outputByte = new byte[4096];
+            //copy binary contect to output stream
+            while(fileIn.read(outputByte, 0, 4096) != -1)
+            {
+                out.write(outputByte, 0, 4096);
+            }
+            fileIn.close();
+            out.flush();
+            out.close();
+            facesContext.responseComplete();
+        }
+        catch(IOException e) {
+    		System.out.println("Catch");
+            e.printStackTrace();
+        }
+	}
 }

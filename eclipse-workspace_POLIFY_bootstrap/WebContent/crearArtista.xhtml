@@ -21,13 +21,52 @@
 	height: auto;
 }
 </style>
-
+	<link href="resources/css/bootstrap.min.css" rel="stylesheet"
+		id="bootstrap-css"></link>
+			<link href="resources/css/Styles.css" rel="stylesheet"></link>
+	<script src="resources/js/jquery-3.3.1.js"></script>
+	<script src="resources/js/bootstrap.min.js"></script>
 </h:head>
 <h:body>
 	<div class="container">
-		<div class="navbar navbar-inverse">
-			<div class="navbar-brand">Crear nuevo Artista</div>
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<a class="navbar-brand" href="index.xhtml">Home <span
+			class="sr-only">(current)</span></a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
+			aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNavDropdown">
+			<ul class="navbar-nav">
+				<li class="nav-item dropdown"><a
+					class="nav-link dropdown-toggle" id="navbarDropdownNuevo"
+					data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Nuevo </a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+						<a class="dropdown-item" href="crearArtista.xhtml">Artista</a> <a
+							class="dropdown-item" href="crearEmpresa.xhtml">Empresa</a> <a
+							class="dropdown-item" href="crearOperacion.xhtml">Operaciones</a>
+						<a class="dropdown-item" href="informes.xhtml">Reporte</a>
+					</div></li>
+
+			</ul>
 		</div>
+			<ul class="navbar-nav">
+				<li class="nav-item dropdown "><a
+					class="nav-link dropdown-toggle" id="navbarDropdownNuevo"
+					data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
+						#{loginBean.user} </a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+						<h:form>
+							<h:commandLink action="#{loginBean.logout}" value="Salir"></h:commandLink>
+						</h:form>
+					</div></li>
+
+			</ul>
+
+	</nav>
+	<h1>Crear nuevo artista</h1>
 		<div class="row">
 			<div class="col-xs-12 col-xs-updated">
 				<h:form id="artistaForm" styleClass="form-horizontal">
